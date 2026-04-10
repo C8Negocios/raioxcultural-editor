@@ -1,65 +1,119 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import { apiGet, SCORE_COLORS } from "./lib/api";
 
-export default function Home() {
+const SCRIPTS = ["score_0_20","score_21_40","score_41_60","score_61_80","score_81_100"];
+
+export default function Dashboard() {
+  const [scripts, setScripts] = useState<Array<{ key: string; label: string; char_count: number; preview: string }>>([]);
+  const [voice, setVoice] = useState({ speed: 1.0 });
+  const [ok, setOk] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    Promise.all([apiGet("/api/config/scripts"), apiGet("/api/config/voice")])
+      .then(([s, v]) => { setScripts(s); setVoice(v); setOk(true); })
+      .catch(() => setOk(false))
+      .finally(() => setLoaded(true));
+  }, []);
+
+  const totalChars = scripts.reduce((s, sc) => s + sc.char_count, 0);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="animate-in">
+      {/* Header */}
+      <div style={{ marginBottom: 40 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 10,
+            background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
+          }}>🎬</div>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800 }}>Editor de Vídeo</h1>
+            <p style={{ color: "var(--text-muted)", fontSize: 14 }}>Raio-X Cultural — raioxcultural.codigooito.com.br</p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {loaded && !ok && (
+        <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "var(--radius-md)", padding: 16, marginBottom: 24, color: "#fca5a5", fontSize: 14 }}>
+          ⚠ Não foi possível conectar ao video-service. Verifique NEXT_PUBLIC_VIDEO_SERVICE_URL.
         </div>
-      </main>
+      )}
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 40 }}>
+        {[
+          { label: "Roteiros configurados", value: loaded ? scripts.length : "…", sub: loaded ? `${totalChars.toLocaleString()} chars total` : "", color: "#3b82f6", icon: "✍" },
+          { label: "Velocidade da voz", value: loaded ? `${voice.speed}×` : "…", sub: loaded ? (voice.speed < 0.9 ? "Mais rápido" : voice.speed > 1.1 ? "Mais lento" : "Padrão") : "", color: "#8b5cf6", icon: "♪" },
+          { label: "Slides totais", value: 15, sub: "8 estáticos · 7 dinâmicos", color: "#10b981", icon: "⊞" },
+          { label: "Status do serviço", value: !loaded ? "…" : ok ? "Online" : "Offline", sub: "video-service FastAPI", color: !loaded ? "#8ba4c4" : ok ? "#10b981" : "#ef4444", icon: ok ? "✓" : "✗" },
+        ].map(s => (
+          <div key={s.label} className="card" style={{ padding: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "var(--text-muted)", marginBottom: 8 }}>{s.label}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: s.color }}>{s.value}</div>
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{s.sub}</div>
+              </div>
+              <div style={{ fontSize: 24, opacity: 0.4 }}>{s.icon}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick actions */}
+      <div style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: "var(--text-secondary)" }}>Ações rápidas</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+          {[
+            { href: "/scripts", title: "Editar Roteiros", desc: "Modifique os textos narrados para cada faixa de score", icon: "✍", color: "#3b82f6" },
+            { href: "/voice",   title: "Configurar Voz",  desc: "Ajuste velocidade e entonação da narração", icon: "♪", color: "#8b5cf6" },
+            { href: "/slides",  title: "Gerenciar Slides", desc: "Reordene slides e defina durações individuais", icon: "⊞", color: "#10b981" },
+            { href: "/preview", title: "Gerar Preview", desc: "Teste o vídeo com dados fictícios", icon: "▶", color: "#f59e0b" },
+          ].map(a => (
+            <a key={a.href} href={a.href} style={{ textDecoration: "none" }}>
+              <div className="card" style={{ padding: "20px 24px", cursor: "pointer", transition: "all 0.2s", borderColor: "var(--border-subtle)" }}
+                onMouseEnter={e => { Object.assign((e.currentTarget as HTMLElement).style, { borderColor: a.color + "55", transform: "translateY(-2px)" }); }}
+                onMouseLeave={e => { Object.assign((e.currentTarget as HTMLElement).style, { borderColor: "var(--border-subtle)", transform: "none" }); }}
+              >
+                <div style={{ fontSize: 24, marginBottom: 10 }}>{a.icon}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>{a.title}</div>
+                <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5 }}>{a.desc}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Scripts list */}
+      <div>
+        <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: "var(--text-secondary)" }}>Roteiros ativos</h2>
+        <div className="card" style={{ overflow: "hidden" }}>
+          {loaded && scripts.map((sc, i) => (
+            <a key={sc.key} href={`/scripts?key=${sc.key}`} style={{ textDecoration: "none" }}>
+              <div style={{ padding: "16px 24px", borderBottom: i < scripts.length - 1 ? "1px solid var(--border-subtle)" : "none", display: "flex", alignItems: "center", gap: 16, transition: "background 0.15s", cursor: "pointer" }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
+              >
+                <div style={{ width: 48, height: 4, borderRadius: 2, background: SCORE_COLORS[sc.key], flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", marginBottom: 3 }}>{sc.label}</div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{sc.preview}…</div>
+                </div>
+                <div style={{ fontSize: 12, color: "var(--text-muted)", flexShrink: 0 }}>{sc.char_count} chars</div>
+              </div>
+            </a>
+          ))}
+          {!loaded && SCRIPTS.map((k, i) => (
+            <div key={k} style={{ padding: "16px 24px", borderBottom: i < 4 ? "1px solid var(--border-subtle)" : "none" }}>
+              <div style={{ height: 16, background: "var(--bg-elevated)", borderRadius: 4, width: "60%", marginBottom: 6 }} />
+              <div style={{ height: 12, background: "var(--bg-elevated)", borderRadius: 4, width: "80%" }} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
