@@ -2,11 +2,20 @@
 import { useEffect, useState, useCallback } from "react";
 import { apiGet, apiPut } from "../lib/api";
 
+const PIPER_MODELS = [
+  { id: "pt_BR-faber-medium", label: "Faber (Masculino Moderado/Corporativo)" },
+  { id: "pt_BR-edresson-low", label: "Edresson (Masculino Grave)" },
+  { id: "pt_BR-fabio-local", label: "Fabio (Masculino Dinâmico)" }
+];
+
 export default function VoicePage() {
   const [speed, setSpeed] = useState(1.0);
-  const [original, setOriginal] = useState(1.0);
+  const [model, setModel] = useState("pt_BR-faber-medium");
+  const [originalSpeed, setOriginalSpeed] = useState(1.0);
+  const [originalModel, setOriginalModel] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved,  setSaved]  = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testText, setTestText] = useState(
     "Olá! Este é o diagnóstico cultural da sua empresa. Desenvolvemos este material especialmente para você e sua equipe."
@@ -15,7 +24,8 @@ export default function VoicePage() {
   const load = useCallback(async () => {
     try {
       const d = await apiGet("/api/config/voice");
-      setSpeed(d.speed); setOriginal(d.speed);
+      setSpeed(d.speed); setOriginalSpeed(d.speed);
+      setModel(d.model || "pt_BR-faber-medium"); setOriginalModel(d.model || "pt_BR-faber-medium");
     } catch {}
   }, []);
 
@@ -24,20 +34,36 @@ export default function VoicePage() {
   const save = async () => {
     setSaving(true);
     try {
-      await apiPut("/api/config/voice", { speed, speaker: 0, model: "pt_BR-faber-medium" });
-      setOriginal(speed); setSaved(true);
+      await apiPut("/api/config/voice", { speed, speaker: 0, model });
+      setOriginalSpeed(speed); setOriginalModel(model); setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } finally { setSaving(false); }
+  };
+
+  const downloadVoice = async () => {
+    setDownloading(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/download-voice?model=${model}`, {
+        method: "POST",
+        headers: { "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail);
+      alert(data.message);
+    } catch (e: any) {
+      alert("Erro ao baixar: " + e.message);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const testPreview = async () => {
     setTesting(true);
     try {
-      // POST para gerar um preview de áudio rápido
       const r = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/preview`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" },
-        body: JSON.stringify({ script_override: testText, voice: { speed, speaker: 0, model: "pt_BR-faber-medium" }, lead_demo: { nome: "Teste", empresa: "Demo", score: 65, colaboradores: "26 a 50" } }),
+        body: JSON.stringify({ script_override: testText, voice: { speed, speaker: 0, model }, lead_demo: { nome: "Teste", empresa: "Demo", score: 65, colaboradores: "26 a 50" } }),
       });
       const { job_id } = await r.json();
       alert(`Preview iniciado (job: ${job_id}). Acesse /preview para acompanhar.`);
@@ -53,7 +79,7 @@ export default function VoicePage() {
     return "Muito lento";
   };
 
-  const changed = speed !== original;
+  const changed = speed !== originalSpeed || model !== originalModel;
 
   return (
     <div className="animate-in">
@@ -67,6 +93,33 @@ export default function VoicePage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         {/* Speed control */}
         <div className="card" style={{ padding: 32 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 24 }}>Locutor (Piper Onnx)</h2>
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: "flex", gap: 12, alignItems: "stretch" }}>
+              <select
+                className="input"
+                value={model}
+                onChange={e => { setModel(e.target.value); setSaved(false); }}
+                style={{ flex: 1, backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+              >
+                {PIPER_MODELS.map(m => (
+                  <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
+              <button 
+                onClick={downloadVoice} 
+                disabled={downloading}
+                className="btn btn-ghost"
+                title="Se for a primeira vez selecionando esta voz, baixe-a no servidor"
+              >
+                {downloading ? "↓ Baixando..." : "↓ Baixar Voz no Servidor"}
+              </button>
+            </div>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8 }}>
+              O modelo precisa estar baixado no Coolify/Volume para gerar o áudio. Utilize o botão acima caso seja uma voz nova.
+            </p>
+          </div>
+
           <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 24 }}>Velocidade da Narração</h2>
 
           {/* Big display */}

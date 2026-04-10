@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
   DragEndEvent,
@@ -9,9 +9,11 @@ import {
   useSortable, arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import Editor from "@monaco-editor/react";
 import { apiGet, apiPut } from "../lib/api";
 
 interface Slide { num: number; type: "static" | "dynamic"; duration: number | null; }
+interface Template { filename: string; content: string; }
 
 function SortableSlide({ slide, onDurChange }: { slide: Slide; onDurChange: (n: number, v: number | null) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.num });
@@ -31,7 +33,6 @@ function SortableSlide({ slide, onDurChange }: { slide: Slide; onDurChange: (n: 
         overflow: "hidden",
         userSelect: "none",
       }}>
-        {/* Drag handle */}
         <div
           {...attributes} {...listeners}
           style={{
@@ -42,7 +43,7 @@ function SortableSlide({ slide, onDurChange }: { slide: Slide; onDurChange: (n: 
             display: "flex", alignItems: "center", gap: 8,
           }}
         >
-          <span style={{ fontSize: 11, color: "var(--text-muted)" }}>⠿</span>
+          <span style={{ fontSize: 11, color: "var(--text-muted)" }}>⣿</span>
           <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>
             Slide {slide.num}
           </span>
@@ -50,7 +51,6 @@ function SortableSlide({ slide, onDurChange }: { slide: Slide; onDurChange: (n: 
             {slide.type === "dynamic" ? "Din" : "Est"}
           </span>
         </div>
-        {/* Duration */}
         <div style={{ padding: "10px 12px" }}>
           <div className="label" style={{ marginBottom: 6 }}>Duração (s)</div>
           <input
@@ -80,6 +80,17 @@ export default function SlidesPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Template Editor State
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [editorContent, setEditorContent] = useState<string>("");
+  const [savingTemplate, setSavingTemplate] = useState(false);
+
+  // File Upload State
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [targetFilename, setTargetFilename] = useState<string>("slide_04.jpg");
+  const [uploading, setUploading] = useState(false);
+
   const sensors = useSensors(useSensor(PointerSensor));
 
   const load = useCallback(async () => {
@@ -87,7 +98,16 @@ export default function SlidesPage() {
       const d = await apiGet("/api/config/slides");
       setOrder(d.order);
       setSlides(d.slides);
-    } catch {}
+
+      const t: Template[] = await apiGet("/api/config/templates");
+      setTemplates(t);
+      if (t.length > 0) {
+        setSelectedTemplate(t[0].filename);
+        setEditorContent(t[0].content);
+      }
+    } catch (e: any) {
+      console.error(e);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -107,7 +127,7 @@ export default function SlidesPage() {
     setSaved(false);
   };
 
-  const save = async () => {
+  const saveOrder = async () => {
     setSaving(true);
     const durations: Record<string, number> = {};
     slides.forEach(s => { if (s.duration !== null) durations[String(s.num)] = s.duration; });
@@ -117,68 +137,162 @@ export default function SlidesPage() {
     } finally { setSaving(false); }
   };
 
+  const saveTemplate = async () => {
+    if (!selectedTemplate) return;
+    setSavingTemplate(true);
+    try {
+      await apiPut(`/api/config/templates/${selectedTemplate}`, { text: editorContent });
+      setTemplates(prev => prev.map(t => t.filename === selectedTemplate ? { ...t, content: editorContent } : t));
+      alert("Template salvo com sucesso!");
+    } catch (e: any) {
+      alert("Erro ao salvar: " + e.message);
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
+  const handleTemplateChange = (filename: string) => {
+    setSelectedTemplate(filename);
+    const t = templates.find(x => x.filename === filename);
+    if (t) setEditorContent(t.content);
+  };
+
+  const doUpload = async () => {
+    if (!uploadFile) return alert("Selecione um arquivo primeiro.");
+    if (!targetFilename) return alert("Defina o nome do arquivo destino (ex: slide_04.jpg)");
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      // O backend usa file.filename como destino, então vamos renomear no FormData
+      formData.append("file", uploadFile, targetFilename);
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/upload-slide`, {
+        method: "POST",
+        headers: { "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" },
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail);
+      alert("Arquivo estático enviado com sucesso!");
+      setUploadFile(null);
+    } catch(e:any) {
+      alert("Falha no upload: " + e);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const totalDur = slides.reduce((s, sl) => s + (sl.duration || 0), 0);
   const autoDur  = slides.filter(s => !s.duration).length;
-
   const orderedSlides = order.map(n => slides.find(s => s.num === n)).filter(Boolean) as Slide[];
 
   return (
-    <div className="animate-in">
+    <div className="animate-in" style={{ paddingBottom: 64 }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800 }}>⊞ Gerenciador de Slides</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 800 }}>⊞ Gerenciador de Slides e Visual</h1>
         <p style={{ color: "var(--text-muted)", fontSize: 14, marginTop: 4 }}>
-          Arraste para reordenar. Defina durações individuais ou deixe em "Auto" para distribuição igual pelo áudio.
+          Controle a linha do tempo e edite todos os aspectos visuais dos seus slides dinâmicos e estáticos.
         </p>
       </div>
 
-      {/* Summary bar */}
-      <div className="card" style={{ padding: "14px 20px", marginBottom: 20, display: "flex", gap: 24, alignItems: "center" }}>
-        <div>
-          <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Total fixo</span>
-          <br /><strong style={{ fontSize: 16, color: "var(--text-primary)" }}>{totalDur.toFixed(1)}s</strong>
-        </div>
-        <div style={{ width: 1, background: "var(--border-subtle)", height: 32 }} />
-        <div>
-          <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Slides automáticos</span>
-          <br /><strong style={{ fontSize: 16, color: "#60a5fa" }}>{autoDur}</strong>
-        </div>
-        <div style={{ width: 1, background: "var(--border-subtle)", height: 32 }} />
-        <div>
-          <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1 }}>Total de slides</span>
-          <br /><strong style={{ fontSize: 16, color: "var(--text-primary)" }}>15</strong>
-        </div>
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-          {saved && <span style={{ fontSize: 12, color: "var(--emerald)" }}>✓ Salvo!</span>}
-          <button className="btn btn-ghost" onClick={load}>↺ Resetar</button>
-          <button className="btn btn-primary" onClick={save} disabled={saving}>
-            {saving ? "Salvando…" : "Salvar ordem"}
-          </button>
-        </div>
-      </div>
-
-      {/* Drag-and-drop timeline */}
-      <div className="card" style={{ padding: 24 }}>
-        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16 }}>
-          Arraste os slides para reordenar ↔
+      {/* Ordem dos Slides */}
+      <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>1. Linha do Tempo (Dnd)</h2>
+      <div className="card" style={{ padding: 24, marginBottom: 32 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div style={{ display: "flex", gap: 24 }}>
+            <div><span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase" }}>Fixo</span><br /><strong>{totalDur.toFixed(1)}s</strong></div>
+            <div><span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase" }}>Auto</span><br /><strong style={{ color: "#60a5fa" }}>{autoDur}</strong></div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {saved && <span style={{ fontSize: 12, color: "var(--emerald)" }}>✓ Salvo!</span>}
+            <button className="btn btn-primary" onClick={saveOrder} disabled={saving}>
+              {saving ? "Salvando…" : "Salvar ordem"}
+            </button>
+          </div>
         </div>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={order} strategy={horizontalListSortingStrategy}>
-            <div style={{
-              display: "flex", gap: 12, overflowX: "auto",
-              paddingBottom: 12, minHeight: 160,
-            }}>
-              {orderedSlides.map(slide => (
-                <SortableSlide key={slide.num} slide={slide} onDurChange={handleDurChange} />
-              ))}
+            <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 12 }}>
+              {orderedSlides.map(slide => <SortableSlide key={slide.num} slide={slide} onDurChange={handleDurChange} />)}
             </div>
           </SortableContext>
         </DndContext>
       </div>
 
-      {/* Legend */}
-      <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
-        <div className="badge badge-blue">Din = Dinâmico (HTML renderizado com dados do lead)</div>
-        <div className="badge badge-violet">Est = Estático (imagem fixa JPG)</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
+        
+        {/* Monaco Editor (HTML) */}
+        <div className="card" style={{ padding: 24, flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700 }}>2. Editor de HTML Dinâmico (Jinja2)</h2>
+            <div style={{ display: "flex", gap: 12 }}>
+              <select className="input" value={selectedTemplate} onChange={e => handleTemplateChange(e.target.value)} style={{ minWidth: 200 }}>
+                {templates.map(t => <option key={t.filename} value={t.filename}>{t.filename}</option>)}
+              </select>
+              <button className="btn btn-primary" onClick={saveTemplate} disabled={savingTemplate || !selectedTemplate}>
+                {savingTemplate ? "..." : "Salvar Código"}
+              </button>
+            </div>
+          </div>
+          
+          <div style={{ flex: 1, minHeight: 600, border: "1px solid var(--border-subtle)", borderRadius: 8, overflow: "hidden" }}>
+             <Editor
+                height="100%"
+                language="html"
+                theme="vs-dark"
+                value={editorContent}
+                onChange={v => setEditorContent(v || "")}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  wordWrap: "on",
+                }}
+              />
+          </div>
+        </div>
+
+        {/* Uploader de Estáticos */}
+        <div className="card" style={{ padding: 24, height: "fit-content" }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>3. Substituir Slides Estáticos</h2>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 20 }}>
+            Faça upload de suas imagens (`.jpg` ou `.png`) para substituir os visuais estáticos fixos do material. O arquivo vai diretamente para a pasta `/app/slides/static/`.
+          </p>
+
+          <div style={{ marginBottom: 16 }}>
+            <label className="label">Qual slide vai substituir?</label>
+            <input 
+              type="text" 
+              className="input" 
+              value={targetFilename} 
+              onChange={e => setTargetFilename(e.target.value)}
+              placeholder="slide_04.jpg" 
+            />
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
+              Exemplos comuns: `slide_04.jpg`, `slide_05.jpg`, `slide_06.jpg`...
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 24 }}>
+            <label className="label">Arquivo Imagem</label>
+            <input 
+              type="file" 
+              className="input" 
+              onChange={e => setUploadFile(e.target.files?.[0] || null)}
+              accept="image/png, image/jpeg"
+              style={{ paddingTop: 8 }}
+            />
+          </div>
+
+          <button 
+            className="btn btn-primary" 
+            onClick={doUpload} 
+            disabled={uploading || !uploadFile}
+            style={{ width: "100%", justifyContent: "center" }}
+          >
+            {uploading ? "Enviando..." : "⬆ Subir Imagem"}
+          </button>
+        </div>
+
       </div>
     </div>
   );
