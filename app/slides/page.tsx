@@ -203,9 +203,12 @@ export default function SlidesPage() {
     { file: "slide_08.png", label: "Slide 08 (Análise)" },
     { file: "slide_09.png", label: "Slide 09 (Gráfico)" },
     { file: "slide_10.png", label: "Slide 10 (Sintomas)" },
-    { file: "slide_12.png", label: "Slide 12 (Solução)" },
     { file: "slide_13.png", label: "Slide 13 (Oferta)" },
   ];
+
+  const totalDur = slides.reduce((s, sl) => s + (sl.duration || 0), 0);
+  const autoDur  = slides.filter(s => !s.duration).length;
+  const orderedSlides = order.map(n => slides.find(s => s.num === n)).filter(Boolean) as Slide[];
 
   return (
     <div className="animate-in" style={{ paddingBottom: 64 }}>
