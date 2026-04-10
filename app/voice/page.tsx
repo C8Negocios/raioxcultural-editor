@@ -60,14 +60,28 @@ export default function VoicePage() {
   const testPreview = async () => {
     setTesting(true);
     try {
-      const r = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/preview`, {
+      const r = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/preview-audio`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" },
-        body: JSON.stringify({ script_override: testText, voice: { speed, speaker: 0, model }, lead_demo: { nome: "Teste", empresa: "Demo", score: 65, colaboradores: "26 a 50" } }),
+        body: JSON.stringify({ script_override: testText, voice: { speed, speaker: 0, model } }),
       });
-      const { job_id } = await r.json();
-      alert(`Preview iniciado (job: ${job_id}). Acesse /preview para acompanhar.`);
-    } finally { setTesting(false); }
+      if (!r.ok) {
+        const err = await r.json(); alert("Erro: " + err.detail); return;
+      }
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      
+      // Quando terminar de tocar, liberamos as variáveis da URL e re-ativamos o botão testPreview 
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        setTesting(false);
+      };
+      audio.play();
+    } catch(e) {
+      alert("Falha no áudio preview: " + e);
+      setTesting(false);
+    }
   };
 
   const speedLabel = (s: number) => {
