@@ -182,9 +182,30 @@ export default function SlidesPage() {
     }
   };
 
-  const totalDur = slides.reduce((s, sl) => s + (sl.duration || 0), 0);
-  const autoDur  = slides.filter(s => !s.duration).length;
-  const orderedSlides = order.map(n => slides.find(s => s.num === n)).filter(Boolean) as Slide[];
+  // Injetar dados de demonstração para o preview HTML ao vivo
+  const getPreviewHTML = () => {
+    let html = editorContent;
+    html = html.replace(/{{ empresa }}/g, "Empresa Tech");
+    html = html.replace(/{{ \s*empresa\s* }}/g, "Empresa Tech");
+    html = html.replace(/{{ nome }}/g, "João Silva");
+    html = html.replace(/{{ \s*nome\s* }}/g, "João Silva");
+    html = html.replace(/{{ cargo }}/g, "CEO");
+    html = html.replace(/{{ \s*cargo\s* }}/g, "CEO");
+    html = html.replace(/{{ score }}/g, "65");
+    html = html.replace(/{{ \s*score\s* }}/g, "65");
+    return html;
+  };
+
+  const STATIC_SLIDES = [
+    { file: "slide_04.png", label: "Slide 04 (Pilares)" },
+    { file: "slide_05.png", label: "Slide 05 (Ritualística)" },
+    { file: "slide_06.png", label: "Slide 06 (Dinâmica)" },
+    { file: "slide_08.png", label: "Slide 08 (Análise)" },
+    { file: "slide_09.png", label: "Slide 09 (Gráfico)" },
+    { file: "slide_10.png", label: "Slide 10 (Sintomas)" },
+    { file: "slide_12.png", label: "Slide 12 (Solução)" },
+    { file: "slide_13.png", label: "Slide 13 (Oferta)" },
+  ];
 
   return (
     <div className="animate-in" style={{ paddingBottom: 64 }}>
@@ -219,14 +240,14 @@ export default function SlidesPage() {
         </DndContext>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: 24 }}>
         
-        {/* Monaco Editor (HTML) */}
+        {/* Monaco Editor (HTML) com Preview */}
         <div className="card" style={{ padding: 24, flex: 1, display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700 }}>2. Editor de HTML Dinâmico (Jinja2)</h2>
             <div style={{ display: "flex", gap: 12 }}>
-              <select className="input" value={selectedTemplate} onChange={e => handleTemplateChange(e.target.value)} style={{ minWidth: 200 }}>
+              <select className="input" value={selectedTemplate} onChange={e => handleTemplateChange(e.target.value)} style={{ minWidth: 200, backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}>
                 {templates.map(t => <option key={t.filename} value={t.filename}>{t.filename}</option>)}
               </select>
               <button className="btn btn-primary" onClick={saveTemplate} disabled={savingTemplate || !selectedTemplate}>
@@ -235,19 +256,39 @@ export default function SlidesPage() {
             </div>
           </div>
           
-          <div style={{ flex: 1, minHeight: 600, border: "1px solid var(--border-subtle)", borderRadius: 8, overflow: "hidden" }}>
-             <Editor
-                height="100%"
-                language="html"
-                theme="vs-dark"
-                value={editorContent}
-                onChange={v => setEditorContent(v || "")}
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 14,
-                  wordWrap: "on",
-                }}
-              />
+          <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 16, height: 700 }}>
+            {/* Visual Preview */}
+            <div style={{ 
+              border: "1px solid var(--border-subtle)", borderRadius: 8, overflow: "hidden", 
+              background: "#333", display: "flex", alignItems: "center", justifyContent: "center",
+              position: "relative"
+            }}>
+              <div style={{ position: "absolute", top: 8, left: 12, fontSize: 11, color: "#aaa", zIndex: 10, background: "rgba(0,0,0,0.5)", padding: "2px 6px", borderRadius: 4 }}>
+                Visualização ao Vivo (Escala 25%)
+              </div>
+              <div style={{ width: 1920, height: 1080, transform: "scale(0.3)", transformOrigin: "center center" }}>
+                <iframe 
+                  srcDoc={getPreviewHTML()}
+                  style={{ width: "100%", height: "100%", border: "none", backgroundColor: "#fff" }}
+                />
+              </div>
+            </div>
+
+            {/* Code */}
+            <div style={{ border: "1px solid var(--border-subtle)", borderRadius: 8, overflow: "hidden" }}>
+               <Editor
+                  height="100%"
+                  language="html"
+                  theme="vs-dark"
+                  value={editorContent}
+                  onChange={v => setEditorContent(v || "")}
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    wordWrap: "on",
+                  }}
+                />
+            </div>
           </div>
         </div>
 
@@ -255,31 +296,31 @@ export default function SlidesPage() {
         <div className="card" style={{ padding: 24, height: "fit-content" }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>3. Substituir Slides Estáticos</h2>
           <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 20 }}>
-            Faça upload de suas imagens (`.jpg` ou `.png`) para substituir os visuais estáticos fixos do material. O arquivo vai diretamente para a pasta `/app/slides/static/`.
+            Faça upload de suas imagens (`.jpg` ou `.png`) para substituir os visuais estáticos fixos do material. O formato recomendado é 1920x1080px.
           </p>
 
           <div style={{ marginBottom: 16 }}>
             <label className="label">Qual slide vai substituir?</label>
-            <input 
-              type="text" 
+            <select 
               className="input" 
               value={targetFilename} 
               onChange={e => setTargetFilename(e.target.value)}
-              placeholder="slide_04.jpg" 
-            />
-            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
-              Exemplos comuns: `slide_04.jpg`, `slide_05.jpg`, `slide_06.jpg`...
-            </div>
+              style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+            >
+              {STATIC_SLIDES.map(s => (
+                <option key={s.file} value={s.file}>{s.label}</option>
+              ))}
+            </select>
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label className="label">Arquivo Imagem</label>
+            <label className="label">Arquivo Imagem Novo</label>
             <input 
               type="file" 
               className="input" 
               onChange={e => setUploadFile(e.target.files?.[0] || null)}
               accept="image/png, image/jpeg"
-              style={{ paddingTop: 8 }}
+              style={{ paddingTop: 8, border: "1px dashed var(--border-default)" }}
             />
           </div>
 
@@ -289,7 +330,7 @@ export default function SlidesPage() {
             disabled={uploading || !uploadFile}
             style={{ width: "100%", justifyContent: "center" }}
           >
-            {uploading ? "Enviando..." : "⬆ Subir Imagem"}
+            {uploading ? "Enviando..." : "⬆ Subir Imagem Selecionada"}
           </button>
         </div>
 
