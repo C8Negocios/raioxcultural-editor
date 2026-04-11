@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect, use } from "react";
 
-const BASE = process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000";
-const KEY  = process.env.NEXT_PUBLIC_EDITOR_API_KEY    || "c8club-editor-2026";
+// Sempre usa o proxy /api/vs para evitar Mixed Content (browser HTTPS → video-service HTTP)
+const BASE = "/api/vs";
+const KEY  = "c8club-editor-2026";
 
 const SCORE_KEYS = [
   { key: "score_0_20",    label: "0–20 pts — Cultura Reativa",             color: "#ef4444" },

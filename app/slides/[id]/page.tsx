@@ -58,12 +58,12 @@ function SortableSlide({ slide, onDurChange, htmlContent, funnelId }: { slide: S
             />
           ) : (
             <img 
-               src={`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/funnels/${funnelId}/static/slide_${String(slide.num).padStart(2, '0')}.png`} 
+               src={`/api/vs/funnels/${funnelId}/static/slide_${String(slide.num).padStart(2, '0')}.png`} 
                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                onError={(e) => { 
-                 (e.target as HTMLImageElement).src = `${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/funnels/${funnelId}/static/slide_${String(slide.num).padStart(2, '0')}.jpg`;
+                 (e.target as HTMLImageElement).src = `/api/vs/funnels/${funnelId}/static/slide_${String(slide.num).padStart(2, '0')}.jpg`;
                  (e.target as HTMLImageElement).onerror = () => {
-                   (e.target as HTMLImageElement).src = `${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/static-slides/slide_${String(slide.num).padStart(2, '0')}.jpg`;
+                   (e.target as HTMLImageElement).src = `/api/vs/static-slides/slide_${String(slide.num).padStart(2, '0')}.jpg`;
                    (e.target as HTMLImageElement).onerror = () => { (e.currentTarget as HTMLImageElement).style.opacity='0'; };
                  };
                }} 
@@ -159,9 +159,10 @@ export default function SlidesPage({ params }: { params: Promise<{ id: string }>
       const formData = new FormData();
       formData.append("file", uploadFile, targetFilename);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/funnels/${funnelId}/upload-slide`, {
+      // usa proxy /api/vs — sem Mixed Content
+      const res = await fetch(`/api/vs/api/config/funnels/${funnelId}/upload-slide`, {
         method: "POST",
-        headers: { "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" },
+        headers: { "x-editor-key": "c8club-editor-2026" },
         body: formData
       });
       const data = await res.json();
