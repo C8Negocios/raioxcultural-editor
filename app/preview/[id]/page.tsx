@@ -202,7 +202,7 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
               </div>
               <video
                 key={job.url}
-                controls autoPlay crossOrigin="anonymous"
+                controls autoPlay playsInline
                 style={{
                   width: "100%", maxHeight: 400,
                   borderRadius: "var(--radius-lg)",
@@ -210,10 +210,10 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
                   boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
                 }}
               >
-                <source src={job.url} type="video/mp4" />
+                <source src={`${job.url}?t=${Date.now()}`} type="video/mp4" />
               </video>
               <div style={{ marginTop: 12 }}>
-                <a href={job.url} target="_blank" className="btn btn-ghost" style={{ fontSize: 12 }}>
+                <a href={`${job.url}?t=${Date.now()}`} target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize: 12 }}>
                   ↗ Abrir em nova aba
                 </a>
               </div>
