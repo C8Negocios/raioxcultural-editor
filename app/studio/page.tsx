@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { apiGet } from "../lib/api";
+import { apiGet, apiPost } from "../lib/api";
 
 interface Funnel {
   id: string;
@@ -9,7 +9,7 @@ interface Funnel {
   slide_count: number;
 }
 
-export default function PreviewDashboard() {
+export default function StudioDashboard() {
   const [funnels, setFunnels] = useState<Funnel[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,9 +31,9 @@ export default function PreviewDashboard() {
   return (
     <div className="animate-in" style={{ paddingBottom: 64 }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800 }}>🚀 Geração & Preview</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 800 }}>🎨 C8 Studio</h1>
         <p style={{ color: "var(--text-muted)", fontSize: 14, marginTop: 4 }}>
-          Selecione o funil desejado para forçar a simulação do pipeline de orquestração em tempo real.
+          Selecione uma apresentação (Funil) para isolar e editar os templates HTML visuais em nosso Pintor Avançado.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export default function PreviewDashboard() {
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
           {funnels.map(funnel => (
-            <Link key={funnel.id} href={`/preview/${funnel.id}`} style={{ textDecoration: "none" }}>
+            <Link key={funnel.id} href={`/studio/${funnel.id}`} style={{ textDecoration: "none" }}>
               <div 
                 className="card" 
                 style={{ 
@@ -61,7 +61,7 @@ export default function PreviewDashboard() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 24
                   }}>
-                    ▶️
+                    {funnel.id === "raiox-cultural" ? "🎥" : "🎨"}
                   </div>
                   <div>
                     <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
@@ -75,10 +75,10 @@ export default function PreviewDashboard() {
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 16, borderTop: "1px solid var(--border-subtle)" }}>
                   <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-                    Simulador e Render
+                    Base renderizadora isolada
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
-                    Testar Motor →
+                    Pintar Templates →
                   </div>
                 </div>
               </div>

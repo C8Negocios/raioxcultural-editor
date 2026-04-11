@@ -5,6 +5,7 @@ const links = [
   { href: "/",        icon: "◈", label: "Dashboard" },
   { href: "/scripts", icon: "✍", label: "Roteiros" },
   { href: "/slides",  icon: "⊞", label: "Slides" },
+  { href: "/studio",  icon: "🎨", label: "C8 Studio" },
   { href: "/voice",   icon: "♪", label: "Narração" },
   { href: "/preview", icon: "▶", label: "Preview" },
 ];

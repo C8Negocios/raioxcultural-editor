@@ -1,5 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
+@font-face {
+  font-family: 'Unitea Sans';
+  src: url('/fonts/Unitea Sans/UniteaSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Unitea Sans';
+  src: url('/fonts/Unitea Sans/UniteaSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Unitea Sans';
+  src: url('/fonts/Unitea Sans/UniteaSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Unitea Sans';
+  src: url('/fonts/Unitea Sans/UniteaSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
 :root {
   --bg-base:       #080c14;
   --bg-surface:    #0d1420;
@@ -29,6 +54,13 @@
 
   --shadow-card: 0 4px 32px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.04) inset;
   --shadow-glow: 0 0 40px rgba(59,130,246,0.15);
+
+  /* GrapesJS Marca C8Club */
+  --gjs-primary-color: #0d1420; /* Fundo principal escuro */
+  --gjs-secondary-color: #1e2d47; /* Bordas e toolbars */
+  --gjs-tertiary-color: #1a2540; /* Fundo de seções/painéis */
+  --gjs-quaternary-color: #00205B; /* Azul C8/Corinthians para destaques e ativos */
+  --gjs-font-color: #f0f6ff; /* Texto branco */
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

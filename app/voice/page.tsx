@@ -3,14 +3,16 @@ import { useEffect, useState, useCallback } from "react";
 import { apiGet, apiPut } from "../lib/api";
 
 const PIPER_MODELS = [
-  { id: "pt_BR-faber-medium", label: "Faber (Masculino Moderado/Corporativo)" },
-  { id: "pt_BR-edresson-low", label: "Edresson (Masculino Grave)" },
-  { id: "pt_BR-fabio-local", label: "Fabio (Masculino Dinâmico)" }
+  { id: "pt_BR-razo-medium", label: "Razo (Masculino Natural/Finetuned)" },
+  { id: "pt_BR-cadu-medium", label: "Cadu (Masculino Inteligente)" },
+  { id: "pt_BR-jeff-medium", label: "Jeff (Masculino Animado)" },
+  { id: "pt_BR-faber-medium", label: "Faber (Masculino Corporativo/Estável)" },
+  { id: "pt_BR-aline-medium", label: "Aline (Feminino Padrão)" }
 ];
 
 export default function VoicePage() {
   const [speed, setSpeed] = useState(1.0);
-  const [model, setModel] = useState("pt_BR-faber-medium");
+  const [model, setModel] = useState("pt_BR-razo-medium");
   const [originalSpeed, setOriginalSpeed] = useState(1.0);
   const [originalModel, setOriginalModel] = useState("");
   const [saving, setSaving] = useState(false);
@@ -25,7 +27,7 @@ export default function VoicePage() {
     try {
       const d = await apiGet("/api/config/voice");
       setSpeed(d.speed); setOriginalSpeed(d.speed);
-      setModel(d.model || "pt_BR-faber-medium"); setOriginalModel(d.model || "pt_BR-faber-medium");
+      setModel(d.model || "pt_BR-razo-medium"); setOriginalModel(d.model || "pt_BR-razo-medium");
     } catch {}
   }, []);
 
