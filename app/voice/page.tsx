@@ -7,7 +7,8 @@ const PIPER_MODELS = [
   { id: "pt_BR-cadu-medium", label: "Cadu (Masculino Inteligente)" },
   { id: "pt_BR-jeff-medium", label: "Jeff (Masculino Animado)" },
   { id: "pt_BR-faber-medium", label: "Faber (Masculino Corporativo/Estável)" },
-  { id: "pt_BR-aline-medium", label: "Aline (Feminino Padrão)" }
+  { id: "pt_BR-aline-medium", label: "Aline (Feminino Padrão)" },
+  { id: "pt_BR-fabio-c8club", label: "Fabio Uliana (C8Club)" }
 ];
 
 export default function VoicePage() {
