@@ -25,24 +25,29 @@ export default function VoicePage() {
     "Olá! Este é o diagnóstico cultural da sua empresa. Desenvolvemos este material especialmente para você e sua equipe."
   );
 
-  const load = useCallback(async () => {
-    try {
-      const d = await apiGet("/api/config/voice");
-      setSpeed(d.speed); setOriginalSpeed(d.speed);
-      setModel(d.model || "pt_BR-razo-medium"); setOriginalModel(d.model || "pt_BR-razo-medium");
-    } catch {}
+  const loadFunnels = useCallback(async () => {
     try {
       const f = await apiGet("/api/config/funnels");
       setFunnels(f.funnels || []);
     } catch {}
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  const loadVoice = useCallback(async () => {
+    if (!funnelId) return;
+    try {
+      const d = await apiGet(`/api/config/funnels/${funnelId}/voice`);
+      setSpeed(d.speed); setOriginalSpeed(d.speed);
+      setModel(d.model || "pt_BR-razo-medium"); setOriginalModel(d.model || "pt_BR-razo-medium");
+    } catch {}
+  }, [funnelId]);
+
+  useEffect(() => { loadFunnels(); }, [loadFunnels]);
+  useEffect(() => { loadVoice(); }, [loadVoice]);
 
   const save = async () => {
     setSaving(true);
     try {
-      await apiPut("/api/config/voice", { speed, speaker: 0, model });
+      await apiPut(`/api/config/funnels/${funnelId}/voice`, { speed, speaker: 0, model });
       setOriginalSpeed(speed); setOriginalModel(model); setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } finally { setSaving(false); }
