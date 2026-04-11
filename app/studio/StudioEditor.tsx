@@ -69,14 +69,6 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
              upload: false,
           }
         });
-        
-        // Inject C8 Brand Assets
-        fetch('/api/assets').then(r => r.json()).then(data => {
-            if (data.assets) {
-                editor.AssetManager.add(data.assets.map((a: string) => ({ src: a })));
-            }
-        });
-        
         // Aplica a regra de visual no próprio css do projeto do canvas
         editor.on('load', () => {
           editor.setDevice('desktop');
@@ -103,20 +95,47 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
           editor.on('load', () => {
               
               const bm = editor.BlockManager;
+              // MATAR TODOS OS BLOCOS INGLESES/FEIOS do preset-webpage que teimam em aparecer
+              bm.getAll().reset();
+
+              // Inserir os Legítimos C8 Blocks
               bm.add('c8-text', {
-                  label: '📌 Título/Texto Livre',
+                  label: '📌 Título / Texto Livre',
                   content: '<div style="font-size: 64px; font-weight: 800; color: #00205B; padding: 20px; font-family: \'Unitea Sans\', sans-serif;">{nome}, escreva aqui!</div>',
-                  category: 'Geral',
-              });
-              bm.add('c8-image', {
-                  label: '🖼️ Imagem / Logotipo',
-                  content: { type: 'image', style: { width: '300px', height: 'auto' } },
-                  category: 'Geral',
+                  category: '1. Estrutura Base',
               });
               bm.add('c8-section', {
                   label: '🟦 Fundo Colorido',
-                  content: '<div style="width: 100%; min-height: 400px; background: #fefefb; display: flex; align-items: center; justify-content: center;">Nova Seção Livre</div>',
-                  category: 'Geral',
+                  content: '<div style="width: 100%; min-height: 400px; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">Nova Seção Livre</div>',
+                  category: '1. Estrutura Base',
+              });
+              bm.add('c8-image', {
+                  label: '🖼️ Imagem (Upload Seu)',
+                  content: { type: 'image', style: { width: '300px', height: 'auto' } },
+                  category: '1. Estrutura Base',
+              });
+
+              // Coletar Biblioteca C8 Nativa diretamente para o Painel de Arrastar (Sidebar)
+              fetch('/api/assets').then(r => r.json()).then(data => {
+                  if (data.assets) {
+                      // Cadastra no Modal Invisivel tbm
+                      editor.AssetManager.add(data.assets.map((a: string) => ({ src: a })));
+                      
+                      // CRIA 1 BLOCO VISUAL NA SIDEBAR PARA CADA MARCA D'AGUA!
+                      data.assets.forEach((src: string, index: number) => {
+                          let categoryName = "3. Apoio / Degradês";
+                          if (src.includes("logotipos")) categoryName = "2. Logotipos Oficiais";
+
+                          // Formata o nome bonitinho ignorando caminho feio
+                          const fileName = src.split('/').pop()?.split('.')[0] || "Asset";
+
+                          bm.add(`c8-asset-${index}`, {
+                              label: `<div style="padding:4px; text-align:center;"><img src="${src}" style="max-height: 40px; border-radius:4px; max-width: 100%; margin: 0 auto; display:block" /><span style="font-size: 10px; color:#fff; display:block; margin-top:4px">${fileName}</span></div>`,
+                              content: { type: 'image', style: { width: '400px', height: 'auto' }, src: src },
+                              category: categoryName
+                          });
+                      });
+                  }
               });
 
               setTimeout(() => {

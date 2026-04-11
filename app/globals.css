@@ -140,8 +140,8 @@ body {
 
 /* ==== C8 STUDIO MINIMAL PANELS ==== */
 .gjs-blocks-c {
-  display: flex !important;
-  flex-direction: column !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
   gap: 12px;
 }
 .gjs-block {
