@@ -419,7 +419,8 @@ ${inner}  </div>
                              return (
                                 <div
                                    key={el.id}
-                                   onMouseDown={(e) => handleMouseDown(e, el)}
+                                   onMouseDown={(e) => { e.stopPropagation(); handleMouseDown(e, el); }}
+                                   onClick={(e) => e.stopPropagation()}
                                    style={{
                                        position: 'absolute',
                                        left: el.x, top: el.y,
