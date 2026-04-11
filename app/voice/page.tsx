@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { apiGet, apiPut } from "../lib/api";
+import { apiGet, apiPut, apiPost } from "../lib/api";
 
 const PIPER_MODELS = [
   { id: "pt_BR-razo-medium", label: "Razo (Masculino Natural/Finetuned)" },
@@ -11,6 +11,8 @@ const PIPER_MODELS = [
 ];
 
 export default function VoicePage() {
+  const [funnels, setFunnels] = useState<Array<{id: string; name: string}>>([]);
+  const [funnelId, setFunnelId] = useState("raiox-cultural");
   const [speed, setSpeed] = useState(1.0);
   const [model, setModel] = useState("pt_BR-razo-medium");
   const [originalSpeed, setOriginalSpeed] = useState(1.0);
@@ -29,6 +31,10 @@ export default function VoicePage() {
       setSpeed(d.speed); setOriginalSpeed(d.speed);
       setModel(d.model || "pt_BR-razo-medium"); setOriginalModel(d.model || "pt_BR-razo-medium");
     } catch {}
+    try {
+      const f = await apiGet("/api/config/funnels");
+      setFunnels(f.funnels || []);
+    } catch {}
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -45,12 +51,13 @@ export default function VoicePage() {
   const downloadVoice = async () => {
     setDownloading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/download-voice?model=${model}`, {
+      // Usa o proxy /api/vs para evitar Mixed Content (browser HTTPS → video-service HTTP)
+      const res = await fetch(`/api/vs/api/config/download-voice?model=${model}`, {
         method: "POST",
-        headers: { "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" }
+        headers: { "x-editor-key": "c8club-editor-2026" }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail);
+      if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
       alert(data.message);
     } catch (e: any) {
       alert("Erro ao baixar: " + e.message);
@@ -62,9 +69,10 @@ export default function VoicePage() {
   const testPreview = async () => {
     setTesting(true);
     try {
-      const r = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"}/api/config/preview-audio`, {
+      // Usa o proxy /api/vs para evitar Mixed Content
+      const r = await fetch(`/api/vs/api/config/preview-audio`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-editor-key": process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026" },
+        headers: { "Content-Type": "application/json", "x-editor-key": "c8club-editor-2026" },
         body: JSON.stringify({ script_override: testText, voice: { speed, speaker: 0, model } }),
       });
       if (!r.ok) {
@@ -73,12 +81,7 @@ export default function VoicePage() {
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
-      
-      // Quando terminar de tocar, liberamos as variáveis da URL e re-ativamos o botão testPreview 
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        setTesting(false);
-      };
+      audio.onended = () => { URL.revokeObjectURL(url); setTesting(false); };
       audio.play();
     } catch(e) {
       alert("Falha no áudio preview: " + e);
@@ -100,8 +103,20 @@ export default function VoicePage() {
   return (
     <div className="animate-in">
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800 }}>♪ Configuração de Narração</h1>
-        <p style={{ color: "var(--text-muted)", fontSize: 14, marginTop: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 8 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, flex: 1 }}>♪ Configuração de Narração</h1>
+          {funnels.length > 0 && (
+            <select
+              className="input"
+              value={funnelId}
+              onChange={e => setFunnelId(e.target.value)}
+              style={{ width: 220, background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+            >
+              {funnels.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+            </select>
+          )}
+        </div>
+        <p style={{ color: "var(--text-muted)", fontSize: 14 }}>
           Ajuste a velocidade e as características da voz gerada pelo Piper TTS.
         </p>
       </div>
