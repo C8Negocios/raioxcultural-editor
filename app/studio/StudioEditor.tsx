@@ -451,12 +451,25 @@ ${inner}  </div>
                              
                              if (el.type === 'raw-html') {
                                   return (
-                                     <iframe 
+                                     <div 
                                          key={el.id} 
-                                         srcDoc={el.content} 
+                                         onMouseDown={(e) => {
+                                             // Selecionamos o Legacy Block, mas não paramos a propagação
+                                             // para permitir que o contentEditable funcione perfeitamente.
+                                             setSelectedElementId(el.id);
+                                         }}
+                                         contentEditable={true}
+                                         suppressContentEditableWarning={true}
+                                         onBlur={(e) => {
+                                             updateElement(el.id, { content: e.currentTarget.innerHTML });
+                                         }}
+                                         dangerouslySetInnerHTML={{ __html: el.content }}
                                          style={{ 
                                              position: 'absolute', top:0, left:0, width: '1920px', height:'1080px', 
-                                             zIndex: el.zIndex, opacity: 0.9, pointerEvents: 'none', border: 'none' 
+                                             zIndex: el.zIndex, opacity: 0.95,
+                                             border: isSelected ? '3px dashed #F59E0B' : 'none',
+                                             outline: 'none',
+                                             cursor: 'text' // Permite clicar e editar livremente
                                          }} 
                                      />
                                   );
@@ -643,6 +656,26 @@ ${inner}  </div>
                            <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
 
                            <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Apagar Ferramenta Textual</button>
+                        </div>
+                    )}
+                    {selectedElement && selectedElement.type === 'raw-html' && (
+                        <div>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                               <div style={{ width: '4px', height: '16px', background: '#F59E0B', borderRadius: '4px' }}></div>
+                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Módulo Legado (GrapesJS)</h3>
+                           </div>
+                           
+                           <p style={{ fontSize: '12px', color: '#6B7280', marginBottom: '16px', lineHeight: 1.4 }}>
+                               Este slide veio do construtor antigo. Você pode <b>clicar duas vezes no texto à esquerda</b> para editar livremente.<br/><br/>
+                               Ou, se preferir ou precisar de variáveis complexas, altere o código bruto abaixo:
+                           </p>
+
+                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Código Visual (HTML Original)</label>
+                           <textarea value={selectedElement.content} onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} style={{ width: '100%', minHeight: '300px', background: '#111827', color: '#10B981', border: 'none', padding: '12px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '11px', resize: 'vertical' }}></textarea>
+
+                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
+
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Excluir Bloco Legado Inteiro</button>
                         </div>
                     )}
                 </div>
