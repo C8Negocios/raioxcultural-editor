@@ -137,3 +137,76 @@ body {
 .dot-green { background: var(--color-emerald); }
 .dot-amber { background: var(--color-amber); }
 .dot-red { background: var(--color-rose); }
+
+/* ==== C8 STUDIO MINIMAL PANELS ==== */
+.gjs-blocks-c {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px;
+}
+.gjs-block {
+  width: 100% !important;
+  min-height: 50px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 12px 16px !important;
+  box-shadow: none !important;
+  transition: all 0.2s !important;
+}
+.gjs-block:hover {
+  background: var(--color-accent) !important;
+  color: #fff !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* Esconder label interno inutil caso tenha svg embutido e usar so font size */
+.gjs-block-label {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  display: block;
+}
+
+/* Style Manager Custom Dark Theme */
+.gjs-sm-sector {
+  background: transparent !important;
+  border: none !important;
+}
+.gjs-sm-title {
+  display: none !important; /* hide sector titles like Design (Geral) since we use our own title */
+}
+.gjs-sm-properties {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 0 !important;
+}
+.gjs-sm-property {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+.gjs-sm-label {
+  font-size: 12px !important;
+  color: #9ca3af !important;
+  padding-bottom: 4px !important;
+}
+.gjs-field {
+  background: rgba(0,0,0,0.3) !important;
+  border: 1px solid #374151 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+}
+.gjs-sm-color {
+  width: 100% !important;
+}
+.gjs-clm-tags { display: none !important; } /* Hide class manager inside style if it appears */
+
+/* Hide GrapesJS Logo just in case */
+.gjs-logo-cont { display: none !important; }

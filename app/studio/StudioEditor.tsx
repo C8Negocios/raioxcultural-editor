@@ -30,48 +30,43 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
           plugins: [presetWebpage],
           pluginsOpts: {
             [presetWebpage as any]: {
-               blocksBasicOpts: { flexGrid: true }
+               blocksBasicOpts: { flexGrid: false },
+               textBlocksOpts: false, /* remove raw text blocks to replace with ours */
             }
           },
-          i18n: {
-             locale: 'en',
+          panels: { defaults: [] }, // KILLS ALL UGLY PRESET PANELS
+          blockManager: {
+              appendTo: '#c8-blocks-container',
           },
-          colorPicker: {
-             appendTo: 'parent',
-             offset: { top: 26, left: -200 }
+          styleManager: {
+              appendTo: '#c8-style-manager',
+              sectors: [{
+                  name: 'Design (Geral)',
+                  open: true,
+                  buildProps: ['background-color', 'color', 'font-size', 'font-weight', 'text-align'],
+                  properties: [
+                      { property: 'background-color', name: 'Cor de Fundo' },
+                      { property: 'color', name: 'Cor da Letra' },
+                      { property: 'font-size', name: 'Tamanho (Texto)' },
+                      { property: 'font-weight', name: 'Peso da Fonte' },
+                      { property: 'text-align', name: 'Alinhamento' },
+                  ]
+              }]
           },
+          i18n: { locale: 'en' },
+          colorPicker: { appendTo: 'parent', offset: { top: 26, left: -200 } },
           deviceManager: {
             devices: [
-              {
-                id: 'desktop',
-                name: 'Slide Vídeo (16:9 HD)',
-                width: '1920px',
-                height: '1080px',
-                widthMedia: '1925px', // Força GrapesJS a tratar como fixed container
-              },
-              {
-                id: 'insta',
-                name: 'Instagram (Quadrado)',
-                width: '1080px',
-                height: '1080px',
-                widthMedia: '1085px',
-              },
-              {
-                id: 'stories',
-                name: 'Stories (9:16)',
-                width: '1080px',
-                height: '1920px',
-                widthMedia: '1085px',
-              }
+              { id: 'desktop', name: 'Slide Vídeo (16:9 HD)', width: '1920px', height: '1080px', widthMedia: '1925px' },
+              { id: 'insta', name: 'Instagram (Quadrado)', width: '1080px', height: '1080px', widthMedia: '1085px' },
+              { id: 'stories', name: 'Stories (9:16)', width: '1080px', height: '1920px', widthMedia: '1085px' }
             ]
           },
           canvas: {
-            styles: [
-              "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
-            ]
+            styles: ["https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"]
           },
           assetManager: {
-             upload: false, // Upload disabled via grapesjs drag&drop to avoid base64 bloat. The user should use our standard image assets or host externally.
+             upload: false,
           }
         });
         
@@ -106,6 +101,24 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
           } catch(e) { console.error("Estilo typography falhou", e) }
           
           editor.on('load', () => {
+              
+              const bm = editor.BlockManager;
+              bm.add('c8-text', {
+                  label: '📌 Título/Texto Livre',
+                  content: '<div style="font-size: 64px; font-weight: 800; color: #00205B; padding: 20px; font-family: \'Unitea Sans\', sans-serif;">{nome}, escreva aqui!</div>',
+                  category: 'Geral',
+              });
+              bm.add('c8-image', {
+                  label: '🖼️ Imagem / Logotipo',
+                  content: { type: 'image', style: { width: '300px', height: 'auto' } },
+                  category: 'Geral',
+              });
+              bm.add('c8-section', {
+                  label: '🟦 Fundo Colorido',
+                  content: '<div style="width: 100%; min-height: 400px; background: #fefefb; display: flex; align-items: center; justify-content: center;">Nova Seção Livre</div>',
+                  category: 'Geral',
+              });
+
               setTimeout(() => {
                   if (editorRef.current) handleFitScreen(editorRef.current);
                   else handleFitScreen(editor);
@@ -341,9 +354,31 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
         </button>
       </div>
       
-      {/* Container onde o Grapes insere a UI de Drag and Drop! */}
-      <div style={{ flex: 1, width: "100%", position: 'relative', overflow: 'hidden' }}>
-         <div ref={domRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}></div>
+      {/* Layout Principal: SideBar (Esquerda) e Canvas (Direita) */}
+      <div style={{ flex: 1, display: 'flex', width: "100%", overflow: 'hidden' }}>
+          
+          {/* C8 Mínimal Sidebar (Vibe Canva) */}
+          <div style={{ width: '320px', background: '#1f2937', color: '#fff', borderRight: '1px solid #374151', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+             
+             {/* Blocos Nativos Adicionáveis */}
+             <div style={{ padding: '16px', borderBottom: '1px solid #374151' }}>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 700, color: '#9ca3af' }}>1. ADICIONAR:</h3>
+                <div id="c8-blocks-container"></div>
+             </div>
+
+             {/* Style super simplificado das coisas selecionadas */}
+             <div style={{ padding: '16px' }}>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 700, color: '#9ca3af' }}>2. DESIGN (SELECIONADO):</h3>
+                <div id="c8-style-manager"></div>
+             </div>
+
+          </div>
+
+          {/* Container onde o Grapes insere a UI de Drag and Drop! */}
+          <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#e5e7eb' }}>
+             <div ref={domRef} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}></div>
+          </div>
+
       </div>
     </div>
   );
