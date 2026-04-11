@@ -32,7 +32,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   const [slides, setSlides] = useState<SlideDef[]>([]);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
   const [assets, setAssets] = useState<string[]>([]);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(0.5);
   const [saving, setSaving] = useState(false);
   
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
             if (match) {
                 try {
                     // base64 decode (Buffer or atob on browser)
-                    const jsonStr = atob(match[1]);
+                    const jsonStr = decodeURIComponent(atob(match[1]));
                     return JSON.parse(jsonStr) as SlideDef;
                 } catch(e) { console.error("Falha ao parsear canvas block", e); }
             }
@@ -94,7 +94,8 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
       const scaleY = (clientHeight - padding) / 1080;
       setScale(Math.min(scaleX, scaleY));
     };
-    handleResize();
+    // small delay to let flex layout settle with minWidth:0 before measuring
+    setTimeout(handleResize, 50);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -298,7 +299,7 @@ ${inner}  </div>
   const selectedElement = currentSlide?.elements.find(x => x.id === selectedElementId);
 
   return (
-    <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', background: '#111827', color: '#fff', fontFamily: 'Inter' }}>
+    <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: '#111827', color: '#fff', fontFamily: 'Inter', overflow: 'hidden' }}>
       
       {/* HEADER NATIVO C8 */}
       <div style={{ height: '60px', padding: '0 24px', background: '#1f2937', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -318,10 +319,10 @@ ${inner}  </div>
          </div>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
          
          {/* SIDEBAR ESQUERDA: CENA DE SLIDES */}
-         <div style={{ width: '280px', background: '#1f2937', borderRight: '1px solid #374151', display: 'flex', flexDirection: 'column' }}>
+         <div style={{ width: '280px', flexShrink: 0, background: '#1f2937', borderRight: '1px solid #374151', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '16px', borderBottom: '1px solid #374151' }}>
                 <h3 style={{ margin: '0 0 12px 0', fontSize: '12px', textTransform: 'uppercase', color: '#9ca3af' }}>Roteiro (Slides)</h3>
                 <button onClick={addSlide} style={{ width: '100%', background: 'transparent', border: '1px dashed #4b5563', color: '#d1d5db', padding: '8px', borderRadius: '4px', cursor: 'pointer' }}>
@@ -345,7 +346,7 @@ ${inner}  </div>
          {/* CANVAS WORKSPACE (O MEIO DA TELA) */}
          <div 
              ref={containerRef}
-             style={{ flex: 1, background: '#111827', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+             style={{ flex: 1, minWidth: 0, minHeight: 0, background: '#111827', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
              onMouseMove={handleMouseMove}
              onMouseUp={handleMouseUp}
              onMouseLeave={handleMouseUp}
