@@ -39,15 +39,18 @@ export default function ScriptsPage({ params }: { params: Promise<{ id: string }
     try {
       const resp = await apiGet(`/api/config/funnels/${funnelId}/slides`);
       setSlides(resp.slides || []);
-      // Pre-fetch dynamic HTML contents for previews
-      resp.slides.forEach(async (s: Slide) => {
-        if (s.type === "dynamic") {
-          try {
-            const h = await apiGet(`/api/config/funnels/${funnelId}/slides/${s.num}`);
-            setHtmls(prev => ({ ...prev, [s.num]: h.html }));
-          } catch {}
-        }
+      
+      const tList = await apiGet(`/api/config/funnels/${funnelId}/templates`);
+      const tMap: Record<number, string> = {};
+      
+      tList.forEach((t: {filename: string, content: string}) => {
+         const numStr = t.filename.replace("slide_", "").split("_")[0].replace(".html", "");
+         const num = parseInt(numStr);
+         if (!isNaN(num)) {
+             tMap[num] = t.content;
+         }
       });
+      setHtmls(tMap);
     } catch {}
   }, [funnelId]);
 
