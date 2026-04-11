@@ -201,7 +201,8 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
                 <span className="badge badge-green">✓ Vídeo gerado com sucesso</span>
               </div>
               <video
-                controls autoPlay
+                key={job.url}
+                controls autoPlay crossOrigin="anonymous"
                 style={{
                   width: "100%", maxHeight: 400,
                   borderRadius: "var(--radius-lg)",
