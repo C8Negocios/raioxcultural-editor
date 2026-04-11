@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import grapesjs from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 import presetWebpage from 'grapesjs-preset-webpage';
-import pt from 'grapesjs/locale/pt';
+// locale pt removed — no type declarations available in this grapesjs version
 import { apiGet, apiPut } from '../lib/api';
 
 export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId?: string }) {
@@ -34,9 +34,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
             }
           },
           i18n: {
-             locale: 'pt',
-             localeFallback: 'en',
-             messages: { pt }
+             locale: 'en',
           },
           colorPicker: {
              appendTo: 'parent',
