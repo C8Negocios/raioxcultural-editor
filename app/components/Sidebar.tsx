@@ -7,14 +7,16 @@ import {
   LayoutDashboard, MessageCircle, Menu, X, ChevronDown,
   Building2, BarChart3, KeyRound, Kanban, Home,
   BookUser, DollarSign, UserCog, PartyPopper, ClipboardList,
-  LogOut, Users, ScanSearch, GraduationCap, Settings, Clapperboard
+  LogOut, Users, ScanSearch, GraduationCap, Settings, Clapperboard,
+  FileText, LayoutTemplate, Mic, Film
 } from 'lucide-react';
 
 // ── Mapa de ícones (nunca muda — só adicionar novos aqui se necessário) ──────
 const ICON_MAP: Record<string, React.ElementType> = {
   LayoutDashboard, Building2, BarChart3, KeyRound, Kanban, Home,
   BookUser, DollarSign, UserCog, PartyPopper, ClipboardList,
-  LogOut, Users, ScanSearch, GraduationCap, Settings, MessageCircle, Clapperboard
+  LogOut, Users, ScanSearch, GraduationCap, Settings, MessageCircle, Clapperboard,
+  FileText, LayoutTemplate, Mic, Film
 };
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -55,6 +57,16 @@ const FALLBACK: MenuModule[] = [
       { name: 'Contatos',  href: 'https://sales.codigooito.com.br/contacts', icon: 'BookUser',        sub: 'Funil + orgânicos' },
       { name: 'Leads',     href: 'https://sales.codigooito.com.br/leads',    icon: 'Users',           sub: 'CRM · Typeform' },
       { name: 'Pipeline',  href: 'https://sales.codigooito.com.br/pipeline', icon: 'Kanban',          sub: 'Funil Raio-X' },
+    ],
+  },
+  {
+    key: 'Estúdio', subtitle: 'Produção Audiovisual', color: '#A855F7',
+    items: [
+      { name: 'Dashboard', href: 'https://c8studio.codigooito.com.br/',         icon: 'Clapperboard',   sub: 'Funis de vídeo' },
+      { name: 'Roteiros',  href: 'https://c8studio.codigooito.com.br/scripts',  icon: 'FileText',       sub: 'Editor por funil' },
+      { name: 'Slides',    href: 'https://c8studio.codigooito.com.br/slides',   icon: 'LayoutTemplate', sub: 'Timeline visual' },
+      { name: 'Narração',  href: 'https://c8studio.codigooito.com.br/voice',    icon: 'Mic',            sub: 'TTS · Vozes' },
+      { name: 'Preview',   href: 'https://c8studio.codigooito.com.br/preview',  icon: 'Film',           sub: 'Preview de vídeo' },
     ],
   },
 ];
