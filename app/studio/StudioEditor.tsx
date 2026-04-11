@@ -233,16 +233,14 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
 
   // ============== 4. Compilação e Gravação ==============
   const compileHtml = (slide: SlideDef) => {
-      // Encode whole UI state string to base64 so backend ignores it and next load restores it.
-      // btoa handles simple ascii, but we might have unicode, so encodeURIComponent first
       const stateData = btoa(encodeURIComponent(JSON.stringify(slide)));
 
       let inner = '';
       for (const el of slide.elements) {
          if (el.type === 'raw-html') {
-             inner += `<div style="position:absolute; width:100px; height:100px; top:0; left:0; z-index:${el.zIndex}">${el.content}</div>\n`;
+             // Embed the legacy code in a full bleed wrapper
+             inner += `<div style="position:absolute; width:1920px; height:1080px; top:0; left:0; z-index:${el.zIndex}">${el.content}</div>\n`;
          } else if (el.type === 'text') {
-             // Replace generic linebreaks if textarea generates \n
              const safeText = el.content.replace(/\n/g, '<br/>');
              inner += `<div style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; font-size:${el.fontSize}px; color:${el.color}; font-weight:${el.fontWeight}; text-align:${el.textAlign}; font-family:'Unitea Sans', sans-serif; z-index:${el.zIndex}">${safeText}</div>\n`;
          } else if (el.type === 'image') {
@@ -357,52 +355,66 @@ ${inner}  </div>
              
              {currentSlide && (
                  <div style={{
-                     width: '1920px', height: '1080px',
-                     background: currentSlide.backgroundColor,
-                     transform: `scale(${scale})`,
+                     width: 1920 * scale, height: 1080 * scale,
                      position: 'relative',
-                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                     boxSizing: 'content-box'
+                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
                  }}>
-                     {currentSlide.elements.map(el => {
-                         const isSelected = el.id === selectedElementId;
-                         
-                         if (el.type === 'raw-html') {
-                              return <div key={el.id} dangerouslySetInnerHTML={{ __html: el.content }} style={{ position: 'absolute', top:0, left:0, width: '100%', height:'100%', zIndex: el.zIndex, opacity: 0.8 }} />
-                         }
+                     <div style={{
+                         width: '1920px', height: '1080px',
+                         background: currentSlide.backgroundColor,
+                         transform: `scale(${scale})`,
+                         transformOrigin: 'top left',
+                         position: 'absolute', top: 0, left: 0
+                     }}>
+                         {currentSlide.elements.map(el => {
+                             const isSelected = el.id === selectedElementId;
+                             
+                             if (el.type === 'raw-html') {
+                                  return (
+                                     <iframe 
+                                         key={el.id} 
+                                         srcDoc={el.content} 
+                                         style={{ 
+                                             position: 'absolute', top:0, left:0, width: '1920px', height:'1080px', 
+                                             zIndex: el.zIndex, opacity: 0.8, pointerEvents: 'none', border: 'none' 
+                                         }} 
+                                     />
+                                  );
+                             }
 
-                         return (
-                            <div
-                               key={el.id}
-                               onMouseDown={(e) => handleMouseDown(e, el)}
-                               style={{
-                                   position: 'absolute',
-                                   left: el.x, top: el.y,
-                                   width: el.width,
-                                   height: el.type === 'image' ? el.height : undefined,
-                                   zIndex: el.zIndex,
-                                   cursor: isDragging ? 'grabbing' : 'grab',
-                                   border: isSelected ? '4px solid #0ea5e9' : '4px solid transparent',
-                                   boxSizing: 'border-box'
-                               }}
-                            >
-                                {/* Pega de "content" ou renderiza Image */}
-                                {el.type === 'text' && (
-                                   <div style={{
-                                       color: el.color, fontSize: el.fontSize, fontWeight: el.fontWeight,
-                                       textAlign: el.textAlign, fontFamily: "'Unitea Sans', sans-serif",
-                                       lineHeight: 1.2
-                                   }}>
-                                       {/* Render line breaks safely */}
-                                       {el.content.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
-                                   </div>
-                                )}
-                                {el.type === 'image' && (
-                                   <img src={el.content} style={{ width: '100%', height: '100%', pointerEvents: 'none', display: 'block' }} />
-                                )}
-                            </div>
-                         );
-                     })}
+                             return (
+                                <div
+                                   key={el.id}
+                                   onMouseDown={(e) => handleMouseDown(e, el)}
+                                   style={{
+                                       position: 'absolute',
+                                       left: el.x, top: el.y,
+                                       width: el.width,
+                                       height: el.type === 'image' ? el.height : undefined,
+                                       zIndex: el.zIndex,
+                                       cursor: isDragging ? 'grabbing' : 'grab',
+                                       border: isSelected ? '4px solid #0ea5e9' : '4px solid transparent',
+                                       boxSizing: 'border-box'
+                                   }}
+                                >
+                                    {/* Pega de "content" ou renderiza Image */}
+                                    {el.type === 'text' && (
+                                       <div style={{
+                                           color: el.color, fontSize: el.fontSize, fontWeight: el.fontWeight,
+                                           textAlign: el.textAlign, fontFamily: "'Unitea Sans', sans-serif",
+                                           lineHeight: 1.2
+                                       }}>
+                                           {/* Render line breaks safely */}
+                                           {el.content.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+                                       </div>
+                                    )}
+                                    {el.type === 'image' && (
+                                       <img src={el.content} style={{ width: '100%', height: '100%', pointerEvents: 'none', display: 'block' }} />
+                                    )}
+                                </div>
+                             );
+                         })}
+                     </div>
                  </div>
              )}
          </div>
@@ -444,6 +456,10 @@ ${inner}  </div>
                            <input type="color" value={currentSlide.backgroundColor} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '100%', height: '40px', padding: '4px', background: '#374151', border: 'none', borderRadius: '4px', cursor: 'pointer' }} />
                            <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>Dica: Se preferir fundo de Nuvem ou Grafismo, volte na Biblioteca e clique em uma das texturas azuis do C8.</p>
                            
+                           {currentSlide.elements.some(x => x.type === 'raw-html') && (
+                               <button onClick={() => updateSlide({...currentSlide, elements: currentSlide.elements.filter(x => x.type !== 'raw-html')})} style={{ marginTop: '24px', width: '100%', padding: '8px', background: '#f59e0b', color: '#fff', border:'none', borderRadius:'4px', cursor:'pointer' }}>Liberar Slide Antigo (Limpar HTML Livre)</button>
+                           )}
+
                            <button onClick={deleteCurrentSlide} style={{ marginTop: '40px', width: '100%', padding: '8px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius:'4px', cursor:'pointer' }}>Excluir Slide Atual</button>
                         </div>
                     )}
