@@ -1,6 +1,14 @@
 // Utilitário para chamar a API do video-service
-const BASE = process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000";
-const KEY  = process.env.NEXT_PUBLIC_EDITOR_API_KEY    || "c8club-editor-2026";
+//
+// Em produção (HTTPS), o browser NÃO pode fazer fetch para endereços HTTP
+// (Mixed Content bloqueado). Por isso usamos /api/vs que o Next.js proxia
+// internamente para o video-service HTTP (via rewrites em next.config.ts).
+const IS_BROWSER = typeof window !== "undefined";
+const BASE = IS_BROWSER
+  ? "/api/vs"   // relativo → Next.js proxy (HTTPS safe)
+  : (process.env.NEXT_PUBLIC_VIDEO_SERVICE_URL || "http://localhost:8000"); // server-side direto
+
+const KEY = process.env.NEXT_PUBLIC_EDITOR_API_KEY || "c8club-editor-2026";
 
 const headers = () => ({ "Content-Type": "application/json", "x-editor-key": KEY });
 
