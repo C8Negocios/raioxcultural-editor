@@ -271,11 +271,6 @@ ${inner}  </div>
   const handleSaveWorkspace = async () => {
      setSaving(true);
      try {
-         // O Operador agora edita VÁRIOS slides no Canvas VibeCode.
-         // Sendo assim, o botão de Salvar envia o slide atual pra backend!
-         // Para simplificar a infra original do pipeline, salvaremos todos em loop!
-         // Wait: the original api /templates accepted a Put for a single filename.
-         // Let's just save the CURRENT slide when they click 'Save'. Or loop all.
          const slide = getSelectedSlide();
          if (!slide) return;
          
@@ -284,8 +279,46 @@ ${inner}  </div>
              content: compileHtml(slide)
          };
          
+         // 1. Salvar o template no Backend
          await apiPut(`/api/config/funnels/${funnelId}/templates/${slide.filename}`, payload);
-         alert("🔥 Design Gravado com Sucesso!");
+
+         // 2. Extrair o Número do Slide e sincronizar com o Roteiro
+         try {
+             // Aceita "slide_01.html" ou "slide_1.html" ou "slide_01_var.html"
+             const baseNumMatch = slide.filename.match(/slide_0*(\d+)/);
+             if (baseNumMatch) {
+                 const num = parseInt(baseNumMatch[1], 10);
+                 const configRes = await apiGet(`/api/config/funnels/${funnelId}/slides`);
+                 
+                 if (configRes && configRes.order) {
+                     const currentOrder: number[] = configRes.order;
+                     const alreadyExists = currentOrder.includes(num);
+                     
+                     if (!alreadyExists) {
+                         // Adiciona nativamente ao Roteiro Pipeline!
+                         const newOrder = [...currentOrder, num];
+                         
+                         // Manter os hooks duracionais
+                         const durations: Record<string, number> = {};
+                         if (configRes.slides) {
+                             configRes.slides.forEach((s: any) => {
+                                 if (s.duration) durations[String(s.num)] = s.duration;
+                             });
+                         }
+
+                         await apiPut(`/api/config/funnels/${funnelId}/slides`, { 
+                             order: newOrder,
+                             durations: durations
+                         });
+                         console.log(`Slide ${num} sincronizado ao roteiro com sucesso!`);
+                     }
+                 }
+             }
+         } catch (e) {
+             console.error("Falha ao injetar slide automaticamente na timeline", e);
+         }
+
+         alert("🔥 Design Gravado com Sucesso! (Sincronizado no Roteiro)");
      } catch (e) {
          console.error(e);
          alert("Falha de gravação.");
