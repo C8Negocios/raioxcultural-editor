@@ -306,10 +306,12 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
         <button 
           onClick={handleDuplicateVariant} 
           style={{ 
-             background: "var(--teal)", color: "#101010", border: "none", 
+             background: "#0ea5e9", color: "#fff", border: "none", 
              padding: "8px 16px", borderRadius: "4px", fontSize: "14px",
              cursor: "pointer", fontWeight: 600, transition: "background 0.2s"
           }}
+          onMouseOver={e => e.currentTarget.style.background = "#0284c7"}
+          onMouseOut={e => e.currentTarget.style.background = "#0ea5e9"}
         >
           [Clonar como Variante]
         </button>
