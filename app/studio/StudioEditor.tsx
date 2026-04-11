@@ -332,22 +332,30 @@ ${inner}  </div>
   const selectedElement = currentSlide?.elements.find(x => x.id === selectedElementId);
 
   return (
-    <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: '#111827', color: '#fff', fontFamily: 'Inter', overflow: 'hidden' }}>
+    <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: '#F9FAFB', color: '#111827', fontFamily: 'Inter', overflow: 'hidden' }}>
       
-      {/* HEADER NATIVO C8 */}
-      <div style={{ height: '60px', padding: '0 24px', background: '#1f2937', borderBottom: '1px solid #374151', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-         <div>
-             <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>
-               🎨 C8<span style={{ color: '#0ea5e9'}}>Studio</span> <span style={{ opacity: 0.5, fontSize: '12px' }}>Native</span>
+      {/* HEADER PREMIUM */}
+      <div style={{ height: '64px', padding: '0 24px', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 10, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+             <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold' }}>
+                C8
+             </div>
+             <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0, letterSpacing: '-0.5px' }}>
+               Studio <span style={{ fontWeight: 400, color: '#6B7280', fontSize: '14px' }}>Canvas</span>
              </h2>
          </div>
-         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px', color: '#9ca3af' }}>Arquivo: <b>{currentSlide?.filename || ""}</b></span>
-            <button onClick={duplicateAsVariant} style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}>
-                [ Variante ]
+         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', color: '#6B7280', marginRight: '16px' }}>Arquivo: <b style={{ color: '#111827' }}>{currentSlide?.filename || "Nenhum"}</b></span>
+            
+            <button onClick={duplicateAsVariant} style={{ background: '#F3F4F6', color: '#374151', border: '1px solid #E5E7EB', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', transition: 'all 0.2s' }}>
+                Duplicar Variável
             </button>
-            <button onClick={handleSaveWorkspace} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}>
-                {saving ? "Salvando..." : "Salvar Lâmina"}
+            <button onClick={handleSaveWorkspace} style={{ background: '#0EA5E9', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.2)' }}>
+                {saving ? (
+                   <><span style={{ animation: 'pulse 1.5s infinite' }}>Salvando...</span></>
+                ) : (
+                   <>Salvar Lâmina</>
+                )}
             </button>
          </div>
       </div>
@@ -355,50 +363,88 @@ ${inner}  </div>
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
          
          {/* SIDEBAR ESQUERDA: CENA DE SLIDES */}
-         <div style={{ width: '280px', flexShrink: 0, background: '#1f2937', borderRight: '1px solid #374151', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '16px', borderBottom: '1px solid #374151' }}>
-                <h3 style={{ margin: '0 0 12px 0', fontSize: '12px', textTransform: 'uppercase', color: '#9ca3af' }}>Roteiro (Slides)</h3>
-                <button onClick={addSlide} style={{ width: '100%', background: 'transparent', border: '1px dashed #4b5563', color: '#d1d5db', padding: '8px', borderRadius: '4px', cursor: 'pointer' }}>
-                   + Novo Slide Branco
+         <div style={{ width: '260px', flexShrink: 0, background: '#FFFFFF', borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', zIndex: 5, boxShadow: '1px 0 2px rgba(0,0,0,0.02)' }}>
+            <div style={{ padding: '20px 16px', borderBottom: '1px solid #F3F4F6' }}>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', color: '#9CA3AF' }}>Roteiro Visual</h3>
+                <button 
+                  onClick={addSlide} 
+                  style={{ width: '100%', background: '#F9FAFB', border: '1px dashed #D1D5DB', color: '#4B5563', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, fontSize: '13px', transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0EA5E9'; e.currentTarget.style.color = '#0EA5E9'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#D1D5DB'; e.currentTarget.style.color = '#4B5563'; }}
+                >
+                   + Nova Lâmina
                 </button>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
-                {slides.map((s, idx) => (
+            <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+                {slides.map((s, idx) => {
+                    const isGlobalActive = selectedSlideIndex === idx;
+                    return (
                     <div 
                         key={idx} 
                         onClick={() => { setSelectedSlideIndex(idx); setSelectedElementId(null); }}
-                        style={{ padding: '12px', background: selectedSlideIndex === idx ? '#374151' : 'transparent', borderRadius: '6px', marginBottom: '4px', cursor: 'pointer', border: selectedSlideIndex === idx ? '1px solid #0ea5e9' : '1px solid transparent' }}>
-                        <span style={{ fontSize: '13px', fontWeight: selectedSlideIndex === idx ? 700 : 400, color: selectedSlideIndex === idx ? '#0ea5e9' : '#fff' }}>
-                            {idx + 1}. {s.filename.replace('.html', '')}
+                        style={{ 
+                            padding: '12px', 
+                            background: isGlobalActive ? '#F0F9FF' : '#FFFFFF', 
+                            borderRadius: '8px', 
+                            marginBottom: '8px', 
+                            cursor: 'pointer', 
+                            border: isGlobalActive ? '1px solid #7DD3FC' : '1px solid #E5E7EB',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}
+                    >
+                        <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: isGlobalActive ? '#0EA5E9' : '#F3F4F6', color: isGlobalActive ? '#FFF' : '#6B7280', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>
+                            {idx + 1}
+                        </div>
+                        <span style={{ fontSize: '13px', fontWeight: isGlobalActive ? 600 : 500, color: isGlobalActive ? '#0369A1' : '#4B5563', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {s.filename.replace('.html', '')}
                         </span>
                     </div>
-                ))}
+                )})}
             </div>
          </div>
 
          {/* CANVAS WORKSPACE (O MEIO DA TELA) */}
          <div 
              ref={containerRef}
-             style={{ flex: 1, minWidth: 0, minHeight: 0, background: '#111827', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+             style={{ 
+                 flex: 1, minWidth: 0, minHeight: 0, 
+                 backgroundColor: '#F3F4F6', 
+                 backgroundImage: 'radial-gradient(#D1D5DB 1px, transparent 1px)', 
+                 backgroundSize: '24px 24px',
+                 position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+             }}
              onMouseMove={handleMouseMove}
              onMouseUp={handleMouseUp}
              onMouseLeave={handleMouseUp}
              onClick={() => setSelectedElementId(null)}
          >
-             {!currentSlide && <div style={{ color: '#6b7280' }}>Nenhuma Lâmina. Crie ou Selecione ao Lado.</div>}
+             {!currentSlide && <div style={{ color: '#9CA3AF', fontWeight: 500 }}>Crie ou selecione uma lâmina para começar.</div>}
              
              {currentSlide && (
                  <div style={{
                      width: 1920 * scale, height: 1080 * scale,
                      position: 'relative',
-                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                     transition: 'all 0.1s ease-out'
                  }}>
+                     {/* Borda Estética do Canvas e Sombra */}
+                     <div style={{ 
+                         position: 'absolute', inset: 0, 
+                         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 15px rgba(0,0,0,0.05)', 
+                         border: '1px solid #E5E7EB',
+                         pointerEvents: 'none', zIndex: 1 
+                     }}></div>
+
+                     {/* Área Real do Slide */}
                      <div style={{
                          width: '1920px', height: '1080px',
                          background: currentSlide.backgroundColor,
                          transform: `scale(${scale})`,
                          transformOrigin: 'top left',
-                         position: 'absolute', top: 0, left: 0
+                         position: 'absolute', top: 0, left: 0,
+                         overflow: 'hidden'
                      }}>
                          {currentSlide.elements.map(el => {
                              const isSelected = el.id === selectedElementId;
@@ -410,7 +456,7 @@ ${inner}  </div>
                                          srcDoc={el.content} 
                                          style={{ 
                                              position: 'absolute', top:0, left:0, width: '1920px', height:'1080px', 
-                                             zIndex: el.zIndex, opacity: 0.8, pointerEvents: 'none', border: 'none' 
+                                             zIndex: el.zIndex, opacity: 0.9, pointerEvents: 'none', border: 'none' 
                                          }} 
                                      />
                                   );
@@ -428,23 +474,33 @@ ${inner}  </div>
                                        height: el.type === 'image' ? el.height : undefined,
                                        zIndex: el.zIndex,
                                        cursor: isDragging ? 'grabbing' : 'grab',
-                                       border: isSelected ? '4px solid #0ea5e9' : '4px solid transparent',
-                                       boxSizing: 'border-box'
+                                       border: isSelected ? '2px dashed #0EA5E9' : '2px solid transparent',
+                                       boxSizing: 'border-box',
+                                       transition: isDragging ? 'none' : 'border 0.2s ease',
                                    }}
                                 >
-                                    {/* Pega de "content" ou renderiza Image */}
+                                    {/* Indicadores de Seleção Premium */}
+                                    {isSelected && (
+                                        <>
+                                            <div style={{ position: 'absolute', top: '-5px', left: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
+                                            <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
+                                            <div style={{ position: 'absolute', bottom: '-5px', left: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
+                                            <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
+                                        </>
+                                    )}
+
                                     {el.type === 'text' && (
                                        <div style={{
                                            color: el.color, fontSize: el.fontSize, fontWeight: el.fontWeight,
                                            textAlign: el.textAlign, fontFamily: "'Unitea Sans', sans-serif",
-                                           lineHeight: 1.2
+                                           lineHeight: 1.2, width: '100%', height: '100%',
+                                           userSelect: 'none'
                                        }}>
-                                           {/* Render line breaks safely */}
                                            {el.content.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
                                        </div>
                                     )}
                                     {el.type === 'image' && (
-                                       <img src={el.content} style={{ width: '100%', height: '100%', pointerEvents: 'none', display: 'block' }} />
+                                       <img src={el.content} draggable={false} style={{ width: '100%', height: '100%', pointerEvents: 'none', display: 'block' }} />
                                     )}
                                 </div>
                              );
@@ -455,25 +511,27 @@ ${inner}  </div>
          </div>
 
          {/* SIDEBAR DIREITA: BIBLIOTECA & PROPRIEDADES */}
-         <div style={{ width: '300px', background: '#1f2937', borderLeft: '1px solid #374151', display: 'flex', flexDirection: 'column' }}>
+         <div style={{ width: '320px', background: '#FFFFFF', borderLeft: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', zIndex: 5, boxShadow: '-1px 0 2px rgba(0,0,0,0.02)' }}>
              
-             {/* Navegação entre Inserir e Editar */}
-             <div style={{ display: 'flex', borderBottom: '1px solid #374151' }}>
-                <button onClick={() => setRightTab('assets')} style={{ flex: 1, padding: '12px', background: rightTab === 'assets' ? '#374151' : 'transparent', color: rightTab === 'assets' ? '#fff' : '#9ca3af', border: 'none', borderBottom: rightTab === 'assets' ? '2px solid #0ea5e9' : '2px solid transparent', cursor: 'pointer', fontWeight: 600 }}>Biblioteca</button>
-                <button onClick={() => setRightTab('props')} style={{ flex: 1, padding: '12px', background: rightTab === 'props' ? '#374151' : 'transparent', color: rightTab === 'props' ? '#fff' : '#9ca3af', border: 'none', borderBottom: rightTab === 'props' ? '2px solid #0ea5e9' : '2px solid transparent', cursor: 'pointer', fontWeight: 600 }}>Config</button>
+             {/* Navegação entre Inserir e Editar (Design Segmentado Estilo Apple) */}
+             <div style={{ padding: '16px', borderBottom: '1px solid #F3F4F6' }}>
+                 <div style={{ background: '#F3F4F6', borderRadius: '8px', padding: '4px', display: 'flex' }}>
+                    <button onClick={() => setRightTab('assets')} style={{ flex: 1, padding: '8px', background: rightTab === 'assets' ? '#FFFFFF' : 'transparent', color: rightTab === 'assets' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'assets' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>Elementos</button>
+                    <button onClick={() => setRightTab('props')} style={{ flex: 1, padding: '8px', background: rightTab === 'props' ? '#FFFFFF' : 'transparent', color: rightTab === 'props' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'props' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>Ajustes</button>
+                 </div>
              </div>
 
              {/* TELA: BIBLIOTECA DE ATIVOS C8 */}
              {rightTab === 'assets' && (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
-                    <button onClick={addTextElement} style={{ width: '100%', padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, marginBottom: '24px' }}>
-                        + Adicionar Texto Libre
+                    <button onClick={addTextElement} style={{ width: '100%', padding: '12px', background: '#F8FAFC', color: '#0EA5E9', border: '1px solid #E0F2FE', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, marginBottom: '24px', transition: 'all 0.2s', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        + Adicionar Texto Livre
                     </button>
 
-                    <h4 style={{ color: '#9ca3af', fontSize: '11px', textTransform: 'uppercase', marginBottom: '8px' }}>Ativos Oficiais C8</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Ativos C8 Club</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                         {assets.map((src, i) => (
-                           <div key={i} onClick={() => addImageElement(src)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', padding: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                           <div key={i} onClick={() => addImageElement(src)} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '80px', transition: 'transform 0.1s, box-shadow 0.1s' }} onMouseEnter={(e)=>{e.currentTarget.style.transform='scale(1.02)'; e.currentTarget.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.05)'}} onMouseLeave={(e)=>{e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none'}}>
                                <img src={src} style={{ maxWidth: '100%', maxHeight: '60px', objectFit: 'contain' }} />
                            </div>
                         ))}
@@ -486,70 +544,105 @@ ${inner}  </div>
                 <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
                     {!selectedElement && currentSlide && (
                         <div>
-                           <h3 style={{ margin: '0 0 16px', fontSize: '14px', color: '#fff' }}>Estilo da Folha (Fundo)</h3>
-                           <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Cor Sólida do Fundo</label>
-                           <input type="color" value={currentSlide.backgroundColor} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '100%', height: '40px', padding: '4px', background: '#374151', border: 'none', borderRadius: '4px', cursor: 'pointer' }} />
-                           <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>Dica: Se preferir fundo de Nuvem ou Grafismo, volte na Biblioteca e clique em uma das texturas azuis do C8.</p>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
+                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Fundo da Lâmina</h3>
+                           </div>
                            
+                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Cor Sólida do Fundo</label>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F9FAFB', padding: '8px', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                               <input type="color" value={currentSlide.backgroundColor} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '30px', height: '30px', cursor: 'pointer', border: 'none', padding: 0, background: 'transparent' }} />
+                               <span style={{ fontSize: '13px', color: '#4B5563', fontFamily: 'monospace' }}>{currentSlide.backgroundColor.toUpperCase()}</span>
+                           </div>
+                           <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '12px', lineHeight: 1.4 }}>Dica: Se preferir texturas como Nuvem Azul ou Grafismos, adicione as imagens pela aba <b>Elementos</b>.</p>
+                           
+                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
+
+                           <h3 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 700, color: '#EF4444', textTransform: 'uppercase' }}>Zona de Perigo</h3>
+
                            {currentSlide.elements.some(x => x.type === 'raw-html') && (
-                               <button onClick={() => updateSlide({...currentSlide, elements: currentSlide.elements.filter(x => x.type !== 'raw-html')})} style={{ marginTop: '24px', width: '100%', padding: '8px', background: '#f59e0b', color: '#fff', border:'none', borderRadius:'4px', cursor:'pointer' }}>Liberar Slide Antigo (Limpar HTML Livre)</button>
+                               <button onClick={() => updateSlide({...currentSlide, elements: currentSlide.elements.filter(x => x.type !== 'raw-html')})} style={{ marginBottom: '12px', width: '100%', padding: '10px', background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Limpar Fundo Legado (GrapesJS)</button>
                            )}
 
-                           <button onClick={deleteCurrentSlide} style={{ marginTop: '40px', width: '100%', padding: '8px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius:'4px', cursor:'pointer' }}>Excluir Slide Atual</button>
+                           <button onClick={deleteCurrentSlide} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Excluir Documento Inteiro</button>
                         </div>
                     )}
 
                     {selectedElement && selectedElement.type === 'image' && (
                         <div>
-                           <h3 style={{ margin: '0 0 16px', fontSize: '14px', color: '#0ea5e9' }}>Formatador de Imagem</h3>
-                           <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Largura da Imagem (Escala)</label>
-                           <input type="range" min="100" max="3000" value={selectedElement.width || 300} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%' }} />
-                           <button onClick={deleteSelectedElement} style={{ marginTop: '24px', width: '100%', padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius:'4px', cursor:'pointer' }}>Apagar Elemento (Del)</button>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
+                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Ajustar Imagem</h3>
+                           </div>
+                           
+                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Escala Virtual (Largura)</label>
+                           <input type="range" min="100" max="3000" value={selectedElement.width || 300} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#0EA5E9' }} />
+                           
+                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
+                           
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Remover Ferramenta</button>
                         </div>
                     )}
 
                     {selectedElement && selectedElement.type === 'text' && (
                         <div>
-                           <h3 style={{ margin: '0 0 16px', fontSize: '14px', color: '#0ea5e9' }}>Formatador de Texto</h3>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
+                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Ajustar Tipografia</h3>
+                           </div>
                            
-                           <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Texto Escrito (Aceita Jinja/Var)</label>
-                           <textarea value={selectedElement.content} onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} style={{ width: '100%', minHeight: '100px', background: '#111827', color: '#fff', border: '1px solid #374151', padding: '8px', borderRadius: '4px', fontFamily: '"Unitea Sans", sans-serif' }}></textarea>
+                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Conteúdo Visual (Jinja Auto)</label>
+                           <textarea value={selectedElement.content} onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} style={{ width: '100%', minHeight: '120px', background: '#F9FAFB', color: '#111827', border: '1px solid #D1D5DB', padding: '12px', borderRadius: '8px', fontFamily: '"Unitea Sans", sans-serif', fontSize: '14px', resize: 'vertical' }}></textarea>
 
-                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '16px' }}>
+                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '20px' }}>
                                <div>
-                                   <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Tamanho</label>
-                                   <input type="number" value={selectedElement.fontSize || 64} onChange={(e) => updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) })} style={{ width: '100%', background: '#111827', color: '#fff', border: '1px solid #374151', padding: '8px', borderRadius: '4px' }} />
+                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Dimensão Font</label>
+                                   <input type="number" value={selectedElement.fontSize || 64} onChange={(e) => updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) })} style={{ width: '100%', background: '#F9FAFB', color: '#111827', border: '1px solid #D1D5DB', padding: '8px 12px', borderRadius: '8px' }} />
                                </div>
                                <div>
-                                   <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Cor</label>
-                                   <input type="color" value={selectedElement.color || '#00205B'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '100%', height:'34px', background: 'transparent', border:'none' }} />
+                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Cor do Pigmento</label>
+                                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: '8px', padding: '4px 8px' }}>
+                                       <input type="color" value={selectedElement.color || '#00205B'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '24px', height: '24px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
+                                       <span style={{ fontSize: '12px', color: '#4B5563', fontFamily: 'monospace' }}>{selectedElement.color}</span>
+                                   </div>
                                </div>
                            </div>
 
-                           <div style={{ marginTop: '16px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Largura da Caixa</label>
-                               <input type="range" min="100" max="2500" value={selectedElement.width || 800} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%' }} />
+                           <div style={{ marginTop: '20px' }}>
+                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Espaço da Fila (Limites)</label>
+                               <input type="range" min="100" max="2500" value={selectedElement.width || 800} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#0EA5E9' }} />
                            </div>
 
-                           <div style={{ marginTop: '16px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Alinhamento Horizontal</label>
-                               <div style={{ display: 'flex', gap: '4px' }}>
-                                   {['left','center','right'].map(align => (
-                                       <button key={align} onClick={() => updateElement(selectedElement.id, { textAlign: align as any })} style={{ flex: 1, padding: '4px', background: selectedElement.textAlign === align ? '#0ea5e9' : '#374151', color:'#fff', border:'none', borderRadius:'4px' }}>{align}</button>
+                           <div style={{ marginTop: '20px' }}>
+                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Formatação Estrutural</label>
+                               <div style={{ display: 'flex', gap: '4px', background: '#F3F4F6', padding: '4px', borderRadius: '8px' }}>
+                                   {[
+                                      { value: 'left',   label: 'ESQ' },
+                                      { value: 'center', label: 'CEN' },
+                                      { value: 'right',  label: 'DIR' }
+                                   ].map(align => (
+                                       <button key={align.value} onClick={() => updateElement(selectedElement.id, { textAlign: align.value as any })} style={{ flex: 1, padding: '6px', background: selectedElement.textAlign === align.value ? '#FFFFFF' : 'transparent', color: selectedElement.textAlign === align.value ? '#0EA5E9' : '#6B7280', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', boxShadow: selectedElement.textAlign === align.value ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}>{align.label}</button>
                                    ))}
                                </div>
                            </div>
                            
-                           <div style={{ marginTop: '16px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '4px' }}>Formatação Base</label>
-                               <div style={{ display: 'flex', gap: '4px' }}>
-                                   {['100','400','600','800'].map(weight => (
-                                       <button key={weight} onClick={() => updateElement(selectedElement.id, { fontWeight: weight })} style={{ flex: 1, padding: '4px', background: selectedElement.fontWeight === weight ? '#0ea5e9' : '#374151', color:'#fff', border:'none', borderRadius:'4px' }}>{weight}</button>
+                           <div style={{ marginTop: '20px' }}>
+                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Gordura (Peso)</label>
+                               <div style={{ display: 'flex', gap: '4px', background: '#F3F4F6', padding: '4px', borderRadius: '8px' }}>
+                                   {[
+                                     { value: '100', label: 'Light' },
+                                     { value: '400', label: 'Normal' },
+                                     { value: '600', label: 'Semi' },
+                                     { value: '800', label: 'Bold' }
+                                   ].map(weight => (
+                                       <button key={weight.value} onClick={() => updateElement(selectedElement.id, { fontWeight: weight.value })} style={{ flex: 1, padding: '6px', background: selectedElement.fontWeight === weight.value ? '#FFFFFF' : 'transparent', color: selectedElement.fontWeight === weight.value ? '#0EA5E9' : '#6B7280', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', boxShadow: selectedElement.fontWeight === weight.value ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}>{weight.label}</button>
                                    ))}
                                </div>
                            </div>
 
-                           <button onClick={deleteSelectedElement} style={{ marginTop: '40px', width: '100%', padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius:'4px', cursor:'pointer' }}>Apagar Elemento (Del)</button>
+                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
+
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Apagar Ferramenta Textual</button>
                         </div>
                     )}
                 </div>
@@ -561,3 +654,4 @@ ${inner}  </div>
     </div>
   );
 }
+
