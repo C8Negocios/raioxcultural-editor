@@ -8,7 +8,7 @@ import {
   Building2, BarChart3, KeyRound, Kanban, Home,
   BookUser, DollarSign, UserCog, PartyPopper, ClipboardList,
   LogOut, Users, ScanSearch, GraduationCap, Settings, Clapperboard,
-  FileText, LayoutTemplate, Mic, Film
+  FileText, LayoutTemplate, Mic, Film, Paintbrush
 } from 'lucide-react';
 
 // ── Mapa de ícones (nunca muda — só adicionar novos aqui se necessário) ──────
@@ -16,7 +16,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   LayoutDashboard, Building2, BarChart3, KeyRound, Kanban, Home,
   BookUser, DollarSign, UserCog, PartyPopper, ClipboardList,
   LogOut, Users, ScanSearch, GraduationCap, Settings, MessageCircle, Clapperboard,
-  FileText, LayoutTemplate, Mic, Film
+  FileText, LayoutTemplate, Mic, Film, Paintbrush
 };
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -62,11 +62,12 @@ const FALLBACK: MenuModule[] = [
   {
     key: 'Estúdio', subtitle: 'Produção Audiovisual', color: '#A855F7',
     items: [
-      { name: 'Dashboard', href: 'https://c8studio.codigooito.com.br/',         icon: 'Clapperboard',   sub: 'Funis de vídeo' },
-      { name: 'Roteiros',  href: 'https://c8studio.codigooito.com.br/scripts',  icon: 'FileText',       sub: 'Editor por funil' },
-      { name: 'Slides',    href: 'https://c8studio.codigooito.com.br/slides',   icon: 'LayoutTemplate', sub: 'Timeline visual' },
-      { name: 'Narração',  href: 'https://c8studio.codigooito.com.br/voice',    icon: 'Mic',            sub: 'TTS · Vozes' },
-      { name: 'Preview',   href: 'https://c8studio.codigooito.com.br/preview',  icon: 'Film',           sub: 'Preview de vídeo' },
+      { name: 'Dashboard',    href: 'https://c8studio.codigooito.com.br/',         icon: 'Clapperboard',   sub: 'Funis de vídeo' },
+      { name: 'Editor Visual',href: 'https://c8studio.codigooito.com.br/studio',   icon: 'Paintbrush',     sub: 'GrapesJS · Templates HTML' },
+      { name: 'Roteiros',     href: 'https://c8studio.codigooito.com.br/scripts',  icon: 'FileText',       sub: 'Editor por funil' },
+      { name: 'Slides',       href: 'https://c8studio.codigooito.com.br/slides',   icon: 'LayoutTemplate', sub: 'Ordenação · Duração' },
+      { name: 'Narração',     href: 'https://c8studio.codigooito.com.br/voice',    icon: 'Mic',            sub: 'TTS · Vozes' },
+      { name: 'Preview',      href: 'https://c8studio.codigooito.com.br/preview',  icon: 'Film',           sub: 'Preview · Gerar vídeo' },
     ],
   },
 ];
