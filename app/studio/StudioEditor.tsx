@@ -69,7 +69,17 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
             styles: [
               "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
             ]
+          },
+          assetManager: {
+             upload: false, // Upload disabled via grapesjs drag&drop to avoid base64 bloat. The user should use our standard image assets or host externally.
           }
+        });
+        
+        // Inject C8 Brand Assets
+        fetch('/api/assets').then(r => r.json()).then(data => {
+            if (data.assets) {
+                editor.AssetManager.add(data.assets.map((a: string) => ({ src: a })));
+            }
         });
         
         // Aplica a regra de visual no próprio css do projeto do canvas
@@ -151,9 +161,9 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   };
 
   const handleNewDesign = async () => {
-      const name = prompt("Digite o nome da nova campanha/slide (Ex: natal-cultural.html):");
+      const name = prompt("Digite o número do novo Slide (Ex: 16):");
       if (!name) return;
-      const fileName = name.endsWith('.html') ? name : `${name}.html`;
+      const fileName = `slide_${name.padStart(2, '0')}.html`;
       const emptyHtml = `<div data-gjs-type="wrapper"></div>`;
       
       try {
@@ -165,6 +175,43 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
           }
       } catch(e: any) {
           alert("Erro ao criar novo design: " + e.message);
+      }
+  };
+
+  const handleDuplicateVariant = async () => {
+      if (!selectedTemplate) return alert("Selecione um slide modelo primeiro.");
+      const baseNum = selectedTemplate.replace("slide_", "").split("_")[0].replace(".html", "");
+      const variantKey = prompt(`Criar variação lógica do Slide ${baseNum}.\nQual o critério do pipeline? (ex: score_0_20, score_21_40, etc)`);
+      if (!variantKey) return;
+      
+      const fileName = `slide_${baseNum}_${variantKey}.html`;
+      const currentHtml = editorRef.current.getHtml();
+      const currentCss = editorRef.current.getCss();
+      
+      const fullCopy = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @font-face { font-family: 'Unitea Sans'; src: url('/fonts/Unitea Sans/UniteaSans-Regular.ttf') format('truetype'); font-weight: 400; }
+    @font-face { font-family: 'Unitea Sans'; src: url('/fonts/Unitea Sans/UniteaSans-Bold.ttf') format('truetype'); font-weight: 700; }
+    body { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Unitea Sans', sans-serif; background: #FEFEFB; color: #101010; }
+    * { box-sizing: border-box; }
+    ${currentCss}
+  </style>
+</head>
+<body>
+  ${currentHtml}
+</body>
+</html>`;
+
+      try {
+          await apiPut(`/api/config/funnels/${funnelId}/templates/${fileName}`, { text: fullCopy });
+          setTemplates(prev => [...prev, { filename: fileName, content: fullCopy }]);
+          setSelectedTemplate(fileName);
+          alert(`Variação ${fileName} criada e salva com sucesso! O motor agora vai usar este layout se o script for ${variantKey}.`);
+      } catch(e: any) {
+          alert("Erro ao clonar variação: " + e.message);
       }
   };
 
@@ -248,10 +295,23 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
           style={{ 
              background: "#00205B", color: "#fff", border: "none", 
              padding: "8px 16px", borderRadius: "4px", fontSize: "14px",
-             cursor: "pointer", fontWeight: 600
+             cursor: "pointer", fontWeight: 600, transition: "background 0.2s"
+          }}
+          onMouseOver={e => e.currentTarget.style.background = "#00153D"}
+          onMouseOut={e => e.currentTarget.style.background = "#00205B"}
+        >
+          [Novo Slide]
+        </button>
+
+        <button 
+          onClick={handleDuplicateVariant} 
+          style={{ 
+             background: "var(--teal)", color: "#101010", border: "none", 
+             padding: "8px 16px", borderRadius: "4px", fontSize: "14px",
+             cursor: "pointer", fontWeight: 600, transition: "background 0.2s"
           }}
         >
-           + Novo Design
+          [Clonar como Variante]
         </button>
         
         <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
