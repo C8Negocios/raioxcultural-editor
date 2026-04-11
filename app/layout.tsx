@@ -11,9 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR">
       <body>
-        <div style={{ display: "flex", minHeight: "100vh" }}>
+        <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', system-ui, sans-serif" }}>
           <Sidebar />
-          <main style={{ flex: 1, overflow: "auto", padding: "32px" }}>
+          <main style={{ flex: 1, minWidth: 0, overflow: "auto", padding: "32px", background: "#F8FAFC" }}>
             {children}
           </main>
         </div>
