@@ -6,20 +6,80 @@ import c8Assets from './c8-assets.json';
 
 type ElementType = 'text' | 'image' | 'raw-html';
 
-const C8_COLORS = [
-  '#FEFEFB', '#EAEAE6', '#C1C1BB', '#7E7E7A', '#51514E',
-  '#101010', '#1B1B1A', '#292927', '#363634', '#444441',
-  '#00205B', 'transparent'
+// ============ PALETA OFICIAL C8 BRAND ============
+// Extraída do SVG "PALETA DE CORES.svg" da pasta "2. Código de Cores"
+const C8_COLOR_FAMILIES = [
+  {
+    family: 'Neutros',
+    colors: [
+      { name: 'Cream', hex: '#FEFEFB' },
+      { name: 'Off-White', hex: '#EAEAE6' },
+      { name: 'Cinza Claro', hex: '#C1C1BB' },
+      { name: 'Cinza Médio', hex: '#7E7E7A' },
+      { name: 'Cinza', hex: '#51514E' },
+      { name: 'Grafite', hex: '#444441' },
+      { name: 'Escuro', hex: '#363634' },
+      { name: 'Carvão', hex: '#292927' },
+      { name: 'Quase Preto', hex: '#1B1B1A' },
+      { name: 'Preto C8', hex: '#101010' },
+    ]
+  },
+  {
+    family: 'Midnight Code',
+    colors: [
+      { name: 'Azul C8 Principal', hex: '#00205B' },
+      { name: 'Azul Navy', hex: '#001440' },
+      { name: 'Azul Médio', hex: '#034F8C' },
+      { name: 'Azul Claro', hex: '#0082C3' },
+    ]
+  },
+  {
+    family: 'Pulse Core',
+    colors: [
+      { name: 'Azul Elétrico', hex: '#0762C8' },
+      { name: 'Azul Intenso', hex: '#0449A0' },
+      { name: 'Azul Suave', hex: '#4A90D9' },
+      { name: 'Sky Blue', hex: '#62B5E5' },
+    ]
+  },
+  {
+    family: 'Embergate',
+    colors: [
+      { name: 'Cobre C8', hex: '#E87722' },
+      { name: 'Cobre Escuro', hex: '#B05510' },
+      { name: 'Cobre Claro', hex: '#F4A86A' },
+    ]
+  },
+  {
+    family: 'Solar Link',
+    colors: [
+      { name: 'Amarelo C8', hex: '#FFCD00' },
+      { name: 'Ouro', hex: '#DAAA00' },
+      { name: 'Mel', hex: '#FFE566' },
+    ]
+  },
+  {
+    family: 'Aquasync',
+    colors: [
+      { name: 'Turquesa C8', hex: '#2DCCD3' },
+      { name: 'Turquesa Escuro', hex: '#1A9DA3' },
+      { name: 'Turquesa Claro', hex: '#7DE5E9' },
+    ]
+  },
 ];
+
+// Flat list para compatibilidade com os campos de cor existentes
+const C8_COLORS_FLAT = C8_COLOR_FAMILIES.flatMap(f => f.colors.map(c => c.hex));
 
 interface FrameElement {
   id: string;
   type: ElementType;
+  subtype?: 'background' | 'graphic' | 'logo';
   x: number;
   y: number;
-  width?: number; // optionally bound text or images
-  height?: number; // for images
-  content: string; // text or url or html
+  width?: number;
+  height?: number;
+  content: string;
   fontSize?: number;
   color?: string;
   fontWeight?: string;
@@ -38,7 +98,6 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   
   const [slides, setSlides] = useState<SlideDef[]>([]);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
-  const [assets, setAssets] = useState<string[]>([]);
   const [scale, setScale] = useState(0.5);
   const [saving, setSaving] = useState(false);
   
@@ -46,30 +105,24 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x:0, y:0, ex:0, ey:0 });
 
-  // Sidebar Tabs
   const [rightTab, setRightTab] = useState<'assets' | 'props'>('assets');
-  const [visibleAssets, setVisibleAssets] = useState({ bg: 4, gr: 6, lg: 6 });
+  const [visibleAssets, setVisibleAssets] = useState({ bg: 6, gr: 8, lg: 8 });
 
   // ============== 1. Initialization ==============
   useEffect(() => {
-
-    // Carregar Lâminas (Slides HTML) do diretório
     apiGet(`/api/config/funnels/${funnelId}/templates`).then((res: any[]) => {
       if (res.length > 0) {
         const loadedSlides: SlideDef[] = res.map(t => {
-            // Tentamos extrair o JSON state oculto
             const match = t.content.match(/<script type="application\/json" id="c8-state">([\s\S]*?)<\/script>/);
             if (match) {
                 try {
-                    // base64 decode (Buffer or atob on browser)
                     const jsonStr = decodeURIComponent(atob(match[1]));
                     return JSON.parse(jsonStr) as SlideDef;
                 } catch(e) { console.error("Falha ao parsear canvas block", e); }
             }
-            // Se falhar ou for legado (GrapesJS ou cru), converte tudo para bloco estático de fundo.
             return {
                 filename: t.filename,
-                backgroundColor: "#FEFEFB",
+                backgroundColor: "#101010",
                 elements: [{
                     id: Math.random().toString(36).substr(2,9),
                     type: "raw-html", content: t.content,
@@ -77,18 +130,14 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
                 }]
             };
         });
-
-        // Ordenar os slides por filename alfabeticamente para seguir o roteiro
         loadedSlides.sort((a,b) => a.filename.localeCompare(b.filename));
         setSlides(loadedSlides);
       } else {
-        // Se vazio, cria um slide de Capa Inicial
-        setSlides([{ filename: 'slide_01_cover.html', backgroundColor: '#FEFEFB', elements: [] }]);
+        setSlides([{ filename: 'slide_01_cover.html', backgroundColor: '#00205B', elements: [] }]);
       }
     }).catch(console.error);
   }, [funnelId]);
 
-  // Fit Screen Scale Resize Observer
   useEffect(() => {
     const handleResize = () => {
       if (!containerRef.current) return;
@@ -98,7 +147,6 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
       const scaleY = (clientHeight - padding) / 1080;
       setScale(Math.min(scaleX, scaleY));
     };
-    // small delay to let flex layout settle with minWidth:0 before measuring
     setTimeout(handleResize, 50);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -109,7 +157,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   const addSlide = async () => {
      const nextNum = slides.length + 1;
      const filename = `slide_${nextNum.toString().padStart(2, '0')}.html`;
-     const newS: SlideDef = { filename, backgroundColor: '#FEFEFB', elements: [] };
+     const newS: SlideDef = { filename, backgroundColor: '#00205B', elements: [] };
      setSlides([...slides, newS]);
      setSelectedSlideIndex(slides.length);
      await handleSaveWorkspace(newS, true);
@@ -119,10 +167,8 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
      const current = slides[selectedSlideIndex];
      const suffix = prompt("Nome da Variação Lógica (ex: score_0_20, error, null):");
      if (!suffix) return;
-     // remove .html and append _suffix.html
      const baseName = current.filename.replace('.html', '');
      const filename = `${baseName}_${suffix}.html`;
-     // deep copy elements
      const newS: SlideDef = { 
         filename, 
         backgroundColor: current.backgroundColor, 
@@ -135,12 +181,8 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
 
   const deleteCurrentSlide = () => {
      if(slides.length <= 1) { alert("Não pode deletar o último slide"); return; }
-     if(confirm("Deseja realmente excluir irreversivelmente este slide? Todas as conexões do roteiro quebrarão!")) {
+     if(confirm("Deseja realmente excluir irreversivelmente este slide?")) {
         const idToDelete = selectedSlideIndex;
-        // The file delete on disk isn't instant in UI unless we call an endpoint! 
-        // For now, we remove it from UI state and when saving, it ONLY overwrites those modified. 
-        // Real deletion requires calling a specific endpoint. Assuming saving only overwrites, the old file will linger. 
-        // We will just remove from UI for visual sanity.
         setSlides(slides.filter((_, idx) => idx !== idToDelete));
         setSelectedSlideIndex(Math.max(0, idToDelete - 1));
      }
@@ -170,8 +212,8 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
          id: Math.random().toString(36).substr(2,9),
          type: 'text',
          content: '{{ empresa }}, escreva algo...',
-         x: 200, y: 200, width: 800,
-         fontSize: 64, color: '#00205B', fontWeight: '800', textAlign: 'left',
+         x: 120, y: 300, width: 900,
+         fontSize: 72, color: '#FEFEFB', fontWeight: '700', textAlign: 'left',
          zIndex: s.elements.length + 1
      };
      updateSlide({ ...s, elements: [...s.elements, newEl] });
@@ -179,18 +221,36 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
      setRightTab('props');
   };
 
-  const addImageElement = (url: string) => {
+  // Inserir fundo — substitui o fundo existente se houver
+  const addBackgroundElement = (url: string) => {
+    const s = getSelectedSlide();
+    if (!s) return;
+    const bgId = Math.random().toString(36).substr(2, 9);
+    const newBg: FrameElement = {
+      id: bgId,
+      type: 'image',
+      subtype: 'background',
+      content: url,
+      x: 0, y: 0, width: 1920, height: 1080,
+      zIndex: 0
+    };
+    // Remove qualquer fundo anterior e insere o novo
+    const withoutBg = s.elements.filter(el => el.subtype !== 'background');
+    updateSlide({ ...s, elements: [newBg, ...withoutBg] });
+    // Não selecionamos o fundo para não travar o editor
+    setRightTab('assets');
+  };
+
+  const addImageElement = (url: string, subtype: 'graphic' | 'logo' = 'graphic') => {
      const s = getSelectedSlide();
      if(!s) return;
-     let defaultWidth = 500;
-     if (url.includes('/logos/')) defaultWidth = 250;
-     else if (url.includes('/graphics/')) defaultWidth = 350;
-
+     const defaultWidth = subtype === 'logo' ? 300 : 400;
      const newEl: FrameElement = {
          id: Math.random().toString(36).substr(2,9),
          type: 'image',
+         subtype,
          content: url,
-         x: 300, y: 300, width: defaultWidth,
+         x: 400, y: 300, width: defaultWidth,
          zIndex: s.elements.length + 1
      };
      updateSlide({ ...s, elements: [...s.elements, newEl] });
@@ -208,10 +268,8 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
      setSelectedElementId(null);
   };
 
-  // Listen for Del key
   useEffect(() => {
      const handleKeyDown = (e: KeyboardEvent) => {
-         // only fire if not inside input
          if (e.key === 'Delete' && selectedElementId && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
             deleteSelectedElement();
          }
@@ -220,8 +278,6 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
      return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedElementId, slides, selectedSlideIndex]);
 
-  
-  // Dragging Handlers
   const handleMouseDown = (e: React.MouseEvent, el: FrameElement) => {
      e.stopPropagation();
      setSelectedElementId(el.id);
@@ -233,7 +289,6 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
     if (!isDragging || !selectedElementId) return;
     const dx = (e.clientX - dragStart.current.x) / scale;
     const dy = (e.clientY - dragStart.current.y) / scale;
-    
     updateElement(selectedElementId, {
         x: dragStart.current.ex + dx,
         y: dragStart.current.ey + dy,
@@ -247,13 +302,20 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
       const stateData = btoa(encodeURIComponent(JSON.stringify(slide)));
 
       let inner = '';
+      // Elemento de fundo (zIndex 0) renderizado primeiro
+      const bgEl = slide.elements.find(el => el.subtype === 'background');
+      if (bgEl) {
+        inner += `<img src="${bgEl.content}" style="position:absolute; top:0; left:0; width:1920px; height:1080px; object-fit:cover; z-index:0; pointer-events:none;" />\n`;
+      }
+
       for (const el of slide.elements) {
+         if (el.subtype === 'background') continue; // já renderizado acima
+         
          if (el.type === 'raw-html') {
-             // Embed the legacy code in a full bleed wrapper
              inner += `<div style="position:absolute; width:1920px; height:1080px; top:0; left:0; z-index:${el.zIndex}">${el.content}</div>\n`;
          } else if (el.type === 'text') {
              const safeText = el.content.replace(/\n/g, '<br/>');
-             inner += `<div style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; font-size:${el.fontSize}px; color:${el.color}; font-weight:${el.fontWeight}; text-align:${el.textAlign}; font-family:'Unitea Sans', sans-serif; z-index:${el.zIndex}">${safeText}</div>\n`;
+             inner += `<div style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; font-size:${el.fontSize}px; color:${el.color}; font-weight:${el.fontWeight}; text-align:${el.textAlign}; font-family:'Unitea Sans', sans-serif; line-height:1.2; z-index:${el.zIndex}">${safeText}</div>\n`;
          } else if (el.type === 'image') {
              if (el.content.endsWith('.svg') && el.color) {
                  inner += `<div style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; z-index:${el.zIndex}; pointer-events:none;">\n`;
@@ -266,6 +328,10 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
          }
       }
    
+      const bgStyle = slide.backgroundColor.startsWith('#') || slide.backgroundColor.startsWith('rgb')
+        ? `background: ${slide.backgroundColor};`
+        : `background: ${slide.backgroundColor} center/cover no-repeat;`;
+
       return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -273,7 +339,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   <style>
     @font-face { font-family: 'Unitea Sans'; src: url('/fonts/Unitea Sans/UniteaSans-Regular.ttf') format('truetype'); font-weight: 400; }
     @font-face { font-family: 'Unitea Sans'; src: url('/fonts/Unitea Sans/UniteaSans-Bold.ttf') format('truetype'); font-weight: 700; }
-    body { margin: 0; padding: 0; font-family: 'Unitea Sans', sans-serif; background: ${slide.backgroundColor.includes('url') ? slide.backgroundColor + ' center/cover no-repeat' : slide.backgroundColor}; overflow:hidden; }
+    body { margin: 0; padding: 0; font-family: 'Unitea Sans', sans-serif; ${bgStyle} overflow:hidden; }
     .c8-canvas { width: 1920px; height: 1080px; position:relative; overflow:hidden; }
   </style>
 </head>
@@ -296,12 +362,9 @@ ${inner}  </div>
              content: compileHtml(slide)
          };
          
-         // 1. Salvar o template no Backend
          await apiPut(`/api/config/funnels/${funnelId}/templates/${slide.filename}`, payload);
 
-         // 2. Extrair o Número do Slide e sincronizar com o Roteiro
          try {
-             // Aceita "slide_01.html" ou "slide_1.html" ou "slide_01_var.html"
              const baseNumMatch = slide.filename.match(/slide_0*(\d+)/);
              if (baseNumMatch) {
                  const num = parseInt(baseNumMatch[1], 10);
@@ -309,33 +372,26 @@ ${inner}  </div>
                  
                  if (configRes && configRes.order) {
                      const currentOrder: number[] = configRes.order;
-                     const alreadyExists = currentOrder.includes(num);
-                     
-                     if (!alreadyExists) {
-                         // Adiciona nativamente ao Roteiro Pipeline!
+                     if (!currentOrder.includes(num)) {
                          const newOrder = [...currentOrder, num];
-                         
-                         // Manter os hooks duracionais
                          const durations: Record<string, number> = {};
                          if (configRes.slides) {
                              configRes.slides.forEach((s: any) => {
                                  if (s.duration) durations[String(s.num)] = s.duration;
                              });
                          }
-
                          await apiPut(`/api/config/funnels/${funnelId}/slides`, { 
                              order: newOrder,
                              durations: durations
                          });
-                         console.log(`Slide ${num} sincronizado ao roteiro com sucesso!`);
                      }
                  }
              }
          } catch (e) {
-             console.error("Falha ao injetar slide automaticamente na timeline", e);
+             console.error("Falha ao injetar slide na timeline", e);
          }
 
-         if(!hideAlert) alert("🔥 Design Gravado com Sucesso! (Sincronizado no Roteiro)");
+         if(!hideAlert) alert("🔥 Design Gravado com Sucesso!");
      } catch (e) {
          console.error(e);
          alert("Falha de gravação.");
@@ -347,137 +403,199 @@ ${inner}  </div>
   // ============== VIEW RENDER ==============
   const currentSlide = getSelectedSlide();
   const selectedElement = currentSlide?.elements.find(x => x.id === selectedElementId);
+  const currentBg = currentSlide?.elements.find(el => el.subtype === 'background');
 
   return (
-    <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: '#F9FAFB', color: '#111827', fontFamily: 'Inter', overflow: 'hidden' }}>
+    <div style={{ 
+      height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', 
+      background: '#0E0F14', color: '#E5E7EB', fontFamily: "'Inter', 'Unitea Sans', sans-serif", 
+      overflow: 'hidden' 
+    }}>
       
-      {/* HEADER PREMIUM */}
-      <div style={{ height: '64px', padding: '0 24px', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 10, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-             <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold' }}>
-                C8
+      {/* ── HEADER C8 STUDIO ── */}
+      <div style={{ 
+        height: '56px', padding: '0 20px', 
+        background: 'linear-gradient(90deg, #000D24 0%, #00205B 100%)',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+        zIndex: 10, flexShrink: 0
+      }}>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+             {/* Logo C8 */}
+             <div style={{ 
+               display: 'flex', alignItems: 'center', gap: '8px',
+               borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '14px' 
+             }}>
+               <svg width="28" height="20" viewBox="0 0 28 20" fill="none">
+                 <path d="M8.4 0C3.76 0 0 3.58 0 8s3.76 8 8.4 8c2.52 0 4.76-1.04 6.3-2.7l-2.52-2.24C11.28 12 9.92 12.6 8.4 12.6c-2.8 0-5.04-2.06-5.04-4.6S5.6 3.4 8.4 3.4c1.52 0 2.88.6 3.78 1.56l2.52-2.26C13.16 1.04 10.92 0 8.4 0Z" fill="#E87722"/>
+                 <path d="M19.6 0c-2.52 0-4.76 1.04-6.3 2.7l2.52 2.24C16.72 4 18.08 3.4 19.6 3.4c2.8 0 5.04 2.06 5.04 4.6s-2.24 4.6-5.04 4.6c-1.52 0-2.88-.6-3.78-1.56l-2.52 2.26C14.84 14.96 17.08 16 19.6 16 24.24 16 28 12.42 28 8s-3.76-8-8.4-8Z" fill="#FEFEFB"/>
+               </svg>
+               <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '-0.3px', color: '#FEFEFB' }}>
+                 C8 Studio
+               </span>
              </div>
-             <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0, letterSpacing: '-0.5px' }}>
-               Studio <span style={{ fontWeight: 400, color: '#6B7280', fontSize: '14px' }}>Canvas</span>
-             </h2>
+             <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+               {currentSlide?.filename || 'Sem arquivo'}
+             </span>
          </div>
-         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <span style={{ fontSize: '13px', color: '#6B7280', marginRight: '16px' }}>Arquivo: <b style={{ color: '#111827' }}>{currentSlide?.filename || "Nenhum"}</b></span>
-            
-            <button onClick={duplicateAsVariant} style={{ background: '#F3F4F6', color: '#374151', border: '1px solid #E5E7EB', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', transition: 'all 0.2s' }}>
+         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button onClick={duplicateAsVariant} style={{ 
+              background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', 
+              border: '1px solid rgba(255,255,255,0.1)', padding: '7px 14px', 
+              borderRadius: '7px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' 
+            }}>
                 Duplicar Variável
             </button>
-            <button onClick={() => handleSaveWorkspace()} style={{ background: '#0EA5E9', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.2)' }}>
-                {saving ? (
-                   <><span style={{ animation: 'pulse 1.5s infinite' }}>Salvando...</span></>
-                ) : (
-                   <>Salvar Lâmina</>
-                )}
+            <button onClick={() => handleSaveWorkspace()} style={{ 
+              background: 'linear-gradient(135deg, #E87722, #D96B10)', 
+              color: '#fff', border: 'none', padding: '7px 18px', 
+              borderRadius: '7px', cursor: 'pointer', fontWeight: 700, fontSize: '12px',
+              boxShadow: '0 4px 12px rgba(232, 119, 34, 0.35)',
+              display: 'flex', alignItems: 'center', gap: '6px'
+            }}>
+                {saving ? '⏳ Salvando...' : '💾 Salvar Lâmina'}
             </button>
          </div>
       </div>
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
          
-         {/* SIDEBAR ESQUERDA: CENA DE SLIDES */}
-         <div style={{ width: '260px', flexShrink: 0, background: '#FFFFFF', borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', zIndex: 5, boxShadow: '1px 0 2px rgba(0,0,0,0.02)' }}>
-            <div style={{ padding: '20px 16px', borderBottom: '1px solid #F3F4F6' }}>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', color: '#9CA3AF' }}>Roteiro Visual</h3>
+         {/* ── SIDEBAR ESQUERDA: ROTEIRO VISUAL ── */}
+         <div style={{ 
+           width: '220px', flexShrink: 0, 
+           background: '#12141C', 
+           borderRight: '1px solid rgba(255,255,255,0.06)', 
+           display: 'flex', flexDirection: 'column', zIndex: 5
+         }}>
+            <div style={{ padding: '14px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '10px' }}>
+                  Roteiro Visual
+                </div>
                 <button 
                   onClick={addSlide} 
-                  style={{ width: '100%', background: '#F9FAFB', border: '1px dashed #D1D5DB', color: '#4B5563', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, fontSize: '13px', transition: 'all 0.2s' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0EA5E9'; e.currentTarget.style.color = '#0EA5E9'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#D1D5DB'; e.currentTarget.style.color = '#4B5563'; }}
+                  style={{ 
+                    width: '100%', background: 'rgba(232, 119, 34, 0.1)', 
+                    border: '1px dashed rgba(232, 119, 34, 0.3)', 
+                    color: '#E87722', padding: '9px', borderRadius: '7px', 
+                    cursor: 'pointer', fontWeight: 600, fontSize: '12px'
+                  }}
                 >
                    + Nova Lâmina
                 </button>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '10px 8px' }}>
                 {slides.map((s, idx) => {
-                    const isGlobalActive = selectedSlideIndex === idx;
+                    const isActive = selectedSlideIndex === idx;
+                    const hasBg = s.elements.some(el => el.subtype === 'background');
                     return (
                     <div 
                         key={idx} 
                         onClick={() => { setSelectedSlideIndex(idx); setSelectedElementId(null); }}
                         style={{ 
-                            padding: '12px', 
-                            background: isGlobalActive ? '#F0F9FF' : '#FFFFFF', 
-                            borderRadius: '8px', 
-                            marginBottom: '8px', 
+                            padding: '10px', 
+                            background: isActive ? 'rgba(232,119,34,0.12)' : 'transparent',
+                            borderRadius: '7px', 
+                            marginBottom: '4px', 
                             cursor: 'pointer', 
-                            border: isGlobalActive ? '1px solid #7DD3FC' : '1px solid #E5E7EB',
-                            transition: 'all 0.2s',
+                            border: isActive ? '1px solid rgba(232,119,34,0.35)' : '1px solid transparent',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '12px'
+                            gap: '10px'
                         }}
                     >
-                        <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: isGlobalActive ? '#0EA5E9' : '#F3F4F6', color: isGlobalActive ? '#FFF' : '#6B7280', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>
+                        <div style={{ 
+                          width: '22px', height: '22px', borderRadius: '5px', 
+                          background: isActive ? '#E87722' : 'rgba(255,255,255,0.07)', 
+                          color: isActive ? '#FFF' : 'rgba(255,255,255,0.4)', 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                          fontSize: '10px', fontWeight: 700, flexShrink: 0
+                        }}>
                             {idx + 1}
                         </div>
-                        <span style={{ fontSize: '13px', fontWeight: isGlobalActive ? 600 : 500, color: isGlobalActive ? '#0369A1' : '#4B5563', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {s.filename.replace('.html', '')}
-                        </span>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ 
+                            fontSize: '12px', fontWeight: isActive ? 600 : 400, 
+                            color: isActive ? '#F9FAFB' : 'rgba(255,255,255,0.5)', 
+                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' 
+                          }}>
+                              {s.filename.replace('.html', '').replace('slide_', 'L')}
+                          </div>
+                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.25)', marginTop: '1px' }}>
+                            {s.elements.filter(e => e.type !== 'raw-html').length} elementos {hasBg ? '· 🖼️' : ''}
+                          </div>
+                        </div>
                     </div>
-                )})}
+                );})}
             </div>
          </div>
 
-         {/* CANVAS WORKSPACE (O MEIO DA TELA) */}
+         {/* ── CANVAS (MEIO) ── */}
          <div 
              ref={containerRef}
              style={{ 
                  flex: 1, minWidth: 0, minHeight: 0, 
-                 backgroundColor: '#F3F4F6', 
-                 backgroundImage: 'radial-gradient(#D1D5DB 1px, transparent 1px)', 
-                 backgroundSize: '24px 24px',
-                 position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                 backgroundColor: '#0A0B10', 
+                 backgroundImage: 'radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)', 
+                 backgroundSize: '28px 28px',
+                 position: 'relative', overflow: 'hidden', 
+                 display: 'flex', alignItems: 'center', justifyContent: 'center' 
              }}
              onMouseMove={handleMouseMove}
              onMouseUp={handleMouseUp}
              onMouseLeave={handleMouseUp}
              onMouseDown={() => setSelectedElementId(null)}
          >
-             {!currentSlide && <div style={{ color: '#9CA3AF', fontWeight: 500 }}>Crie ou selecione uma lâmina para começar.</div>}
+             {!currentSlide && (
+               <div style={{ color: 'rgba(255,255,255,0.2)', fontWeight: 500 }}>
+                 Crie ou selecione uma lâmina para começar.
+               </div>
+             )}
              
              {currentSlide && (
                  <div style={{
                      width: 1920 * scale, height: 1080 * scale,
                      position: 'relative',
-                     transition: 'all 0.1s ease-out'
                  }}>
-                     {/* Borda Estética do Canvas e Sombra */}
+                     {/* Sombra e borda */}
                      <div style={{ 
                          position: 'absolute', inset: 0, 
-                         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 15px rgba(0,0,0,0.05)', 
-                         border: '1px solid #E5E7EB',
-                         pointerEvents: 'none', zIndex: 1 
-                     }}></div>
+                         boxShadow: '0 30px 80px -10px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.05)', 
+                         pointerEvents: 'none', zIndex: 200
+                     }}/>
 
-                     {/* Área Real do Slide */}
+                     {/* Canvas Area Real */}
                      <div style={{
                          width: '1920px', height: '1080px',
                          background: currentSlide.backgroundColor,
-                         backgroundSize: currentSlide.backgroundColor.includes('url') ? 'cover' : undefined,
-                         backgroundPosition: currentSlide.backgroundColor.includes('url') ? 'center' : undefined,
-                         backgroundRepeat: currentSlide.backgroundColor.includes('url') ? 'no-repeat' : undefined,
                          transform: `scale(${scale})`,
                          transformOrigin: 'top left',
                          position: 'absolute', top: 0, left: 0,
                          overflow: 'hidden'
                      }}>
+                         {/* Fundo (background element) renderizado separado para garantir cobertura total */}
+                         {currentBg && (
+                           <img
+                             src={currentBg.content}
+                             draggable={false}
+                             style={{
+                               position: 'absolute', top: 0, left: 0,
+                               width: '100%', height: '100%',
+                               objectFit: 'cover', zIndex: 0,
+                               pointerEvents: 'none',
+                               display: 'block'
+                             }}
+                           />
+                         )}
+
                          {currentSlide.elements.map(el => {
+                             if (el.subtype === 'background') return null; // já renderizado
                              const isSelected = el.id === selectedElementId;
                              
                              if (el.type === 'raw-html') {
                                   return (
                                      <div 
                                          key={el.id} 
-                                         onMouseDown={(e) => {
-                                             // Selecionamos o Legacy Block, mas não paramos a propagação
-                                             // para permitir que o contentEditable funcione perfeitamente.
-                                             setSelectedElementId(el.id);
-                                         }}
+                                         onMouseDown={() => setSelectedElementId(el.id)}
                                          contentEditable={true}
                                          suppressContentEditableWarning={true}
                                          onBlur={(e) => {
@@ -486,10 +604,10 @@ ${inner}  </div>
                                          dangerouslySetInnerHTML={{ __html: el.content }}
                                          style={{ 
                                              position: 'absolute', top:0, left:0, width: '1920px', height:'1080px', 
-                                             zIndex: el.zIndex, opacity: 0.95,
-                                             border: isSelected ? '3px dashed #F59E0B' : 'none',
+                                             zIndex: el.zIndex,
+                                             border: isSelected ? '3px dashed rgba(232,119,34,0.8)' : 'none',
                                              outline: 'none',
-                                             cursor: 'text' // Permite clicar e editar livremente
+                                             cursor: 'text'
                                          }} 
                                      />
                                   );
@@ -507,18 +625,17 @@ ${inner}  </div>
                                        height: el.type === 'image' ? el.height : undefined,
                                        zIndex: el.zIndex,
                                        cursor: isDragging ? 'grabbing' : 'grab',
-                                       border: isSelected ? '2px dashed #0EA5E9' : '2px solid transparent',
+                                       border: isSelected ? '2px dashed rgba(232,119,34,0.9)' : '2px solid transparent',
                                        boxSizing: 'border-box',
-                                       transition: isDragging ? 'none' : 'border 0.2s ease',
+                                       transition: isDragging ? 'none' : 'border 0.15s ease',
                                    }}
                                 >
-                                    {/* Indicadores de Seleção Premium */}
                                     {isSelected && (
                                         <>
-                                            <div style={{ position: 'absolute', top: '-5px', left: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
-                                            <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
-                                            <div style={{ position: 'absolute', bottom: '-5px', left: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
-                                            <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '10px', height: '10px', background: '#FFF', border: '2px solid #0EA5E9', borderRadius: '50%' }}></div>
+                                            <div style={{ position: 'absolute', top: '-5px', left: '-5px', width: '10px', height: '10px', background: '#E87722', borderRadius: '50%' }}/>
+                                            <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '10px', height: '10px', background: '#E87722', borderRadius: '50%' }}/>
+                                            <div style={{ position: 'absolute', bottom: '-5px', left: '-5px', width: '10px', height: '10px', background: '#E87722', borderRadius: '50%' }}/>
+                                            <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '10px', height: '10px', background: '#E87722', borderRadius: '50%' }}/>
                                         </>
                                     )}
 
@@ -526,18 +643,14 @@ ${inner}  </div>
                                        <div style={{
                                            color: el.color, fontSize: el.fontSize, fontWeight: el.fontWeight,
                                            textAlign: el.textAlign, fontFamily: "'Unitea Sans', sans-serif",
-                                           lineHeight: 1.2, width: '100%', height: '100%',
-                                           userSelect: 'none'
+                                           lineHeight: 1.15, width: '100%', userSelect: 'none'
                                        }}>
                                            {el.content.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
                                        </div>
                                     )}
                                     {el.type === 'image' && (
                                        <div style={{ position: 'relative', width: '100%', display: 'flex' }}>
-                                           {/* Imagem Transparente dita os limites (Aspect Ratio Native) */}
                                            <img src={el.content} draggable={false} style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none', opacity: (el.content.endsWith('.svg') && el.color) ? 0 : 1, objectFit: 'contain' }} />
-                                           
-                                           {/* Mascara de SVG injetando cor (Se habilitada) */}
                                            {(el.content.endsWith('.svg') && el.color) && (
                                                <div style={{ 
                                                    position: 'absolute', inset: 0,
@@ -553,241 +666,385 @@ ${inner}  </div>
                              );
                          })}
                      </div>
+
+                     {/* HUD: Info do canvas */}
+                     <div style={{ 
+                       position: 'absolute', bottom: '-24px', left: 0, 
+                       fontSize: '10px', color: 'rgba(255,255,255,0.25)',
+                       fontFamily: 'monospace' 
+                     }}>
+                       1920 × 1080 · zoom {Math.round(scale * 100)}%
+                     </div>
                  </div>
              )}
          </div>
 
-         {/* SIDEBAR DIREITA: BIBLIOTECA & PROPRIEDADES */}
-         <div style={{ width: '320px', background: '#FFFFFF', borderLeft: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', zIndex: 5, boxShadow: '-1px 0 2px rgba(0,0,0,0.02)' }}>
+         {/* ── SIDEBAR DIREITA: ATIVOS & PROPS ── */}
+         <div style={{ 
+           width: '300px', 
+           background: '#12141C', 
+           borderLeft: '1px solid rgba(255,255,255,0.06)', 
+           display: 'flex', flexDirection: 'column', zIndex: 5 
+         }}>
              
-             {/* Navegação entre Inserir e Editar (Design Segmentado Estilo Apple) */}
-             <div style={{ padding: '16px', borderBottom: '1px solid #F3F4F6' }}>
-                 <div style={{ background: '#F3F4F6', borderRadius: '8px', padding: '4px', display: 'flex' }}>
-                    <button onClick={() => setRightTab('assets')} style={{ flex: 1, padding: '8px', background: rightTab === 'assets' ? '#FFFFFF' : 'transparent', color: rightTab === 'assets' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'assets' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>🎨 Ativos C8</button>
-                    <button onClick={() => setRightTab('props')} style={{ flex: 1, padding: '8px', background: rightTab === 'props' ? '#FFFFFF' : 'transparent', color: rightTab === 'props' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'props' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>⚙️ Ajustes</button>
+             {/* Tabs */}
+             <div style={{ padding: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0 }}>
+                 <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '7px', padding: '3px', display: 'flex' }}>
+                    <button onClick={() => setRightTab('assets')} style={{ 
+                      flex: 1, padding: '7px', 
+                      background: rightTab === 'assets' ? '#E87722' : 'transparent', 
+                      color: rightTab === 'assets' ? '#FFF' : 'rgba(255,255,255,0.4)', 
+                      border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 700, fontSize: '12px'
+                    }}>🎨 Ativos C8</button>
+                    <button onClick={() => setRightTab('props')} style={{ 
+                      flex: 1, padding: '7px', 
+                      background: rightTab === 'props' ? '#E87722' : 'transparent', 
+                      color: rightTab === 'props' ? '#FFF' : 'rgba(255,255,255,0.4)', 
+                      border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 700, fontSize: '12px'
+                    }}>⚙️ Ajustes</button>
                  </div>
              </div>
 
-             {/* TELA: BIBLIOTECA DE ATIVOS C8 */}
+             {/* ── TELA: BIBLIOTECA DE ATIVOS ── */}
              {rightTab === 'assets' && (
-                <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
-                    <button onClick={addTextElement} style={{ width: '100%', padding: '12px', background: '#F8FAFC', color: '#0EA5E9', border: '1px solid #E0F2FE', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, marginBottom: '24px', transition: 'all 0.2s', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                        + Adicionar Texto Livre
+                <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+                    
+                    {/* Botão Adicionar Texto */}
+                    <button onClick={addTextElement} style={{ 
+                      width: '100%', padding: '10px', 
+                      background: 'rgba(255, 255, 255, 0.04)', 
+                      color: 'rgba(255,255,255,0.7)', 
+                      border: '1px dashed rgba(255,255,255,0.15)', 
+                      borderRadius: '7px', cursor: 'pointer', fontWeight: 600, 
+                      marginBottom: '16px', fontSize: '13px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                    }}>
+                        ✏️ Adicionar Texto Livre
                     </button>
 
-                    <div style={{ marginBottom: '24px' }}>
-                        <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Fundos & Texturas 3D</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    {/* Seção: Fundos e Texturas */}
+                    <div style={{ marginBottom: '20px' }}>
+                        <div style={{ 
+                          display: 'flex', alignItems: 'center', gap: '6px', 
+                          marginBottom: '10px' 
+                        }}>
+                          <div style={{ width: '3px', height: '12px', background: '#E87722', borderRadius: '2px' }}/>
+                          <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'rgba(255,255,255,0.4)' }}>
+                            Fundos & Texturas 3D
+                          </span>
+                          {currentBg && (
+                            <span style={{ marginLeft: 'auto', fontSize: '9px', color: '#E87722', fontWeight: 600 }}>
+                              ● ATIVO
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
                             {c8Assets.backgrounds.slice(0, visibleAssets.bg).map((bg) => (
-                               <div key={bg.id} onClick={() => currentSlide && updateSlide({...currentSlide, backgroundColor: `url('${bg.url}')`})} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', height: '60px', transition: 'all 0.2s', position: 'relative' }} onMouseEnter={(e)=>e.currentTarget.style.borderColor='#0EA5E9'} onMouseLeave={(e)=>e.currentTarget.style.borderColor='#E5E7EB'}>
-                                   <img src={bg.url} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                               <div 
+                                 key={bg.id} 
+                                 onClick={() => addBackgroundElement(bg.url)}
+                                 title={bg.id}
+                                 style={{ 
+                                   background: '#1A1D28', border: '1px solid rgba(255,255,255,0.07)', 
+                                   borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', 
+                                   height: '50px', position: 'relative',
+                                   transition: 'border-color 0.15s'
+                                 }} 
+                                 onMouseEnter={(e) => e.currentTarget.style.borderColor = '#E87722'}
+                                 onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'}
+                               >
+                                  <img src={bg.url} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                                </div>
                             ))}
                         </div>
                         {visibleAssets.bg < c8Assets.backgrounds.length && (
-                            <button onClick={() => setVisibleAssets(v => ({...v, bg: v.bg + 6}))} style={{ width: '100%', padding: '6px', marginTop: '8px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Carregar Mais (+6)</button>
+                            <button onClick={() => setVisibleAssets(v => ({...v, bg: v.bg + 6}))} style={{ width: '100%', padding: '6px', marginTop: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Carregar Mais (+6)</button>
                         )}
                     </div>
 
-                    <div style={{ marginBottom: '24px' }}>
-                        <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Grafismos de Apoio</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    {/* Seção: Grafismos */}
+                    <div style={{ marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+                          <div style={{ width: '3px', height: '12px', background: '#0762C8', borderRadius: '2px' }}/>
+                          <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'rgba(255,255,255,0.4)' }}>
+                            Grafismos de Apoio
+                          </span>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
                             {c8Assets.graphics.slice(0, visibleAssets.gr).map((gr) => (
-                               <div key={gr.id} onClick={() => addImageElement(gr.url)} style={{ background: gr.id.includes('branco-padrao') ? '#00205B' : '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', transition: 'transform 0.1s' }} onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={(e)=>e.currentTarget.style.transform='none'}>
-                                   <img src={gr.url} loading="lazy" decoding="async" style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain', display: 'block' }} />
+                               <div 
+                                 key={gr.id} 
+                                 onClick={() => addImageElement(gr.url, 'graphic')}
+                                 title={gr.id}
+                                 style={{ 
+                                   background: gr.id.includes('branco') || gr.id.includes('white') ? '#00205B' : '#1A1D28', 
+                                   border: '1px solid rgba(255,255,255,0.07)', 
+                                   borderRadius: '6px', padding: '6px', cursor: 'pointer', 
+                                   display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                   height: '50px', transition: 'transform 0.1s, border-color 0.15s'
+                                 }} 
+                                 onMouseEnter={(e) => { e.currentTarget.style.transform='scale(1.05)'; e.currentTarget.style.borderColor='#0762C8'; }}
+                                 onMouseLeave={(e) => { e.currentTarget.style.transform='none'; e.currentTarget.style.borderColor='rgba(255,255,255,0.07)'; }}
+                               >
+                                  <img src={gr.url} loading="lazy" decoding="async" style={{ maxWidth: '100%', maxHeight: '36px', objectFit: 'contain', display: 'block' }} />
                                </div>
                             ))}
                         </div>
                         {visibleAssets.gr < c8Assets.graphics.length && (
-                            <button onClick={() => setVisibleAssets(v => ({...v, gr: v.gr + 10}))} style={{ width: '100%', padding: '6px', marginTop: '8px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Carregar Mais (+10)</button>
+                            <button onClick={() => setVisibleAssets(v => ({...v, gr: v.gr + 9}))} style={{ width: '100%', padding: '6px', marginTop: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Carregar Mais (+9)</button>
                         )}
                     </div>
 
-                    <div style={{ marginBottom: '24px' }}>
-                        <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Topologia e Marcas</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    {/* Seção: Logos */}
+                    <div style={{ marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+                          <div style={{ width: '3px', height: '12px', background: '#FFCD00', borderRadius: '2px' }}/>
+                          <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'rgba(255,255,255,0.4)' }}>
+                            Topologia & Marcas
+                          </span>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
                             {c8Assets.logos.slice(0, visibleAssets.lg).map((lg) => (
-                               <div key={lg.id} onClick={() => addImageElement(lg.url)} style={{ background: lg.id.includes('branco') ? '#111827' : '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', transition: 'transform 0.1s' }} onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={(e)=>e.currentTarget.style.transform='none'}>
-                                   <img src={lg.url} loading="lazy" decoding="async" style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain', display: 'block' }} />
+                               <div 
+                                 key={lg.id} 
+                                 onClick={() => addImageElement(lg.url, 'logo')}
+                                 title={lg.id}
+                                 style={{ 
+                                   background: lg.id.includes('branco') || lg.id.includes('white') ? '#00205B' : '#1A1D28', 
+                                   border: '1px solid rgba(255,255,255,0.07)', 
+                                   borderRadius: '6px', padding: '6px', cursor: 'pointer', 
+                                   display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                   height: '50px', transition: 'transform 0.1s, border-color 0.15s'
+                                 }} 
+                                 onMouseEnter={(e) => { e.currentTarget.style.transform='scale(1.05)'; e.currentTarget.style.borderColor='#FFCD00'; }}
+                                 onMouseLeave={(e) => { e.currentTarget.style.transform='none'; e.currentTarget.style.borderColor='rgba(255,255,255,0.07)'; }}
+                               >
+                                  <img src={lg.url} loading="lazy" decoding="async" style={{ maxWidth: '100%', maxHeight: '36px', objectFit: 'contain', display: 'block' }} />
                                </div>
                             ))}
                         </div>
                         {visibleAssets.lg < c8Assets.logos.length && (
-                            <button onClick={() => setVisibleAssets(v => ({...v, lg: v.lg + 10}))} style={{ width: '100%', padding: '6px', marginTop: '8px', background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Carregar Mais (+10)</button>
+                            <button onClick={() => setVisibleAssets(v => ({...v, lg: v.lg + 9}))} style={{ width: '100%', padding: '6px', marginTop: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Carregar Mais (+9)</button>
                         )}
                     </div>
                 </div>
              )}
 
-             {/* TELA: CONFIGURAÇÕES DE ELEMENTOS/FUNDO */}
+             {/* ── TELA: PROPRIEDADES ── */}
              {rightTab === 'props' && (
-                <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+                <div style={{ flex: 1, overflowY: 'auto', padding: '14px' }}>
+
+                    {/* Fundo da Lâmina (nenhum elemento selecionado) */}
                     {!selectedElement && currentSlide && (
                         <div>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
-                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Fundo da Lâmina</h3>
+                           {/* Fundo da Lâmina */}
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                               <div style={{ width: '3px', height: '14px', background: '#E87722', borderRadius: '3px' }}/>
+                               <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F9FAFB' }}>Fundo da Lâmina</h3>
                            </div>
-                           
-                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Cor Oficial / Hex</label>
-                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
-                               {C8_COLORS.map(c => (
-                                   <div key={c} onClick={() => updateSlide({...currentSlide, backgroundColor: c})} style={{ width: '22px', height: '22px', borderRadius: '4px', background: c === 'transparent' ? 'repeating-conic-gradient(#E5E7EB 0% 25%, transparent 0% 50%) 50% / 8px 8px' : c, cursor: 'pointer', border: currentSlide.backgroundColor === c ? '2px solid #0EA5E9' : '1px solid #E5E7EB', outline: currentSlide.backgroundColor === c ? '2px solid #fff' : 'none', outlineOffset: '-2px' }} title={c} />
-                               ))}
-                           </div>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F9FAFB', padding: '8px', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                               <input type="color" value={currentSlide.backgroundColor.includes('url') ? '#ffffff' : currentSlide.backgroundColor} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '30px', height: '30px', cursor: 'pointer', border: 'none', padding: 0, background: 'transparent' }} />
-                               <span style={{ fontSize: '13px', color: '#4B5563', fontFamily: 'monospace' }}>{currentSlide.backgroundColor.includes('url') ? 'Imagem (Bg)' : currentSlide.backgroundColor.toUpperCase()}</span>
-                           </div>
-                           <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '12px', lineHeight: 1.4 }}>Dica: Se preferir texturas como Nuvem Azul ou Grafismos, adicione as imagens pela aba <b>Elementos</b>.</p>
-                           
-                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
 
-                           <h3 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 700, color: '#EF4444', textTransform: 'uppercase' }}>Zona de Perigo</h3>
-
-                           {currentSlide.elements.some(x => x.type === 'raw-html') && (
-                               <button onClick={() => updateSlide({...currentSlide, elements: currentSlide.elements.filter(x => x.type !== 'raw-html')})} style={{ marginBottom: '12px', width: '100%', padding: '10px', background: '#FFFBEB', color: '#D97706', border: '1px solid #FDE68A', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Limpar Fundo Legado (GrapesJS)</button>
+                           {/* Fundo de imagem atual */}
+                           {currentBg && (
+                             <div style={{ marginBottom: '14px', padding: '10px', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.07)' }}>
+                               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>Fundo Ativo:</div>
+                               <img src={currentBg.content} style={{ width: '100%', height: '58px', objectFit: 'cover', borderRadius: '5px', display: 'block' }} />
+                               <button onClick={() => { 
+                                 const s = getSelectedSlide();
+                                 if (s) updateSlide({ ...s, elements: s.elements.filter(el => el.subtype !== 'background') });
+                               }} style={{ width: '100%', marginTop: '8px', padding: '6px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171', borderRadius: '5px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Remover Fundo de Imagem</button>
+                             </div>
                            )}
 
-                           <button onClick={deleteCurrentSlide} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Excluir Documento Inteiro</button>
+                           {/* Cor de Fundo */}
+                           <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                             Cor de Fundo
+                           </label>
+                           
+                           {/* Paleta de cores completa por família */}
+                           {C8_COLOR_FAMILIES.map(family => (
+                             <div key={family.family} style={{ marginBottom: '10px' }}>
+                               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.25)', marginBottom: '5px', fontWeight: 600 }}>
+                                 {family.family}
+                               </div>
+                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                 {family.colors.map(c => (
+                                   <div 
+                                     key={c.hex} 
+                                     onClick={() => updateSlide({...currentSlide, backgroundColor: c.hex})}
+                                     title={`${c.name} ${c.hex}`}
+                                     style={{ 
+                                       width: '22px', height: '22px', borderRadius: '5px', 
+                                       background: c.hex, cursor: 'pointer', 
+                                       border: currentSlide.backgroundColor === c.hex 
+                                         ? '2px solid #E87722' 
+                                         : '1px solid rgba(255,255,255,0.1)',
+                                       boxSizing: 'border-box'
+                                     }} 
+                                   />
+                                 ))}
+                               </div>
+                             </div>
+                           ))}
+
+                           {/* Input de cor manual */}
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.04)', padding: '8px', borderRadius: '7px', border: '1px solid rgba(255,255,255,0.08)', marginTop: '10px' }}>
+                               <input type="color" value={currentSlide.backgroundColor.startsWith('#') ? currentSlide.backgroundColor : '#00205B'} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '28px', height: '28px', cursor: 'pointer', border: 'none', padding: 0, background: 'transparent', borderRadius: '4px' }} />
+                               <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>
+                                 {currentSlide.backgroundColor.toUpperCase()}
+                               </span>
+                           </div>
+                           
+                           <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.06)', margin: '20px 0' }} />
+
+                           <div style={{ fontSize: '11px', fontWeight: 700, color: '#F87171', textTransform: 'uppercase', marginBottom: '10px' }}>
+                             Zona de Perigo
+                           </div>
+
+                           {currentSlide.elements.some(x => x.type === 'raw-html') && (
+                               <button onClick={() => updateSlide({...currentSlide, elements: currentSlide.elements.filter(x => x.type !== 'raw-html')})} style={{ marginBottom: '8px', width: '100%', padding: '9px', background: 'rgba(245, 158, 11, 0.08)', color: '#FBBF24', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '7px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Limpar Fundo Legado (GrapesJS)</button>
+                           )}
+
+                           <button onClick={deleteCurrentSlide} style={{ width: '100%', padding: '9px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171', borderRadius: '7px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Excluir Lâmina Inteira</button>
                         </div>
                     )}
 
-                    {selectedElement && selectedElement.type === 'image' && (
+                    {/* Propriedades de Imagem */}
+                    {selectedElement && selectedElement.type === 'image' && selectedElement.subtype !== 'background' && (
                         <div>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
-                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Ajustar Imagem</h3>
-                           </div>
-                           
-                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Escala Virtual (Largura)</label>
-                           <input type="range" min="100" max="3000" value={selectedElement.width || 300} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#0EA5E9' }} />
-                           
-                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
-                           
-                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Remover Ferramenta</button>
-                        </div>
-                    )}
-
-                    {selectedElement && selectedElement.type === 'text' && (
-                        <div>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
-                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Ajustar Tipografia</h3>
-                           </div>
-                           
-                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Conteúdo Visual (Jinja Auto)</label>
-                           <textarea value={selectedElement.content} onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} style={{ width: '100%', minHeight: '120px', background: '#F9FAFB', color: '#111827', border: '1px solid #D1D5DB', padding: '12px', borderRadius: '8px', fontFamily: '"Unitea Sans", sans-serif', fontSize: '14px', resize: 'vertical' }}></textarea>
-
-                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '20px' }}>
-                               <div>
-                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Dimensão Font</label>
-                                   <input type="number" value={selectedElement.fontSize || 64} onChange={(e) => updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) })} style={{ width: '100%', background: '#F9FAFB', color: '#111827', border: '1px solid #D1D5DB', padding: '8px 12px', borderRadius: '8px' }} />
-                               </div>
-                               <div>
-                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Pigmento</label>
-                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
-                                      {C8_COLORS.slice(0, 11).map(c => (
-                                          <div key={c} onClick={() => updateElement(selectedElement.id, { color: c })} style={{ width: '16px', height: '16px', borderRadius: '4px', background: c, cursor: 'pointer', border: selectedElement.color === c ? '2px solid #0EA5E9' : '1px solid #E5E7EB' }} title={c} />
-                                      ))}
-                                   </div>
-                                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: '8px', padding: '4px 8px' }}>
-                                       <input type="color" value={selectedElement.color || '#00205B'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '24px', height: '24px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
-                                       <span style={{ fontSize: '12px', color: '#4B5563', fontFamily: 'monospace' }}>{selectedElement.color}</span>
-                                   </div>
-                               </div>
-                           </div>
-
-                           <div style={{ marginTop: '20px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Espaço da Fila (Limites)</label>
-                               <input type="range" min="100" max="2500" value={selectedElement.width || 800} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#0EA5E9' }} />
-                           </div>
-
-                           <div style={{ marginTop: '20px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Formatação Estrutural</label>
-                               <div style={{ display: 'flex', gap: '4px', background: '#F3F4F6', padding: '4px', borderRadius: '8px' }}>
-                                   {[
-                                      { value: 'left',   label: 'ESQ' },
-                                      { value: 'center', label: 'CEN' },
-                                      { value: 'right',  label: 'DIR' }
-                                   ].map(align => (
-                                       <button key={align.value} onClick={() => updateElement(selectedElement.id, { textAlign: align.value as any })} style={{ flex: 1, padding: '6px', background: selectedElement.textAlign === align.value ? '#FFFFFF' : 'transparent', color: selectedElement.textAlign === align.value ? '#0EA5E9' : '#6B7280', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', boxShadow: selectedElement.textAlign === align.value ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}>{align.label}</button>
-                                   ))}
-                               </div>
-                           </div>
-                           
-                           <div style={{ marginTop: '20px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Gordura (Peso)</label>
-                               <div style={{ display: 'flex', gap: '4px', background: '#F3F4F6', padding: '4px', borderRadius: '8px' }}>
-                                   {[
-                                     { value: '100', label: 'Light' },
-                                     { value: '400', label: 'Normal' },
-                                     { value: '600', label: 'Semi' },
-                                     { value: '800', label: 'Bold' }
-                                   ].map(weight => (
-                                       <button key={weight.value} onClick={() => updateElement(selectedElement.id, { fontWeight: weight.value })} style={{ flex: 1, padding: '6px', background: selectedElement.fontWeight === weight.value ? '#FFFFFF' : 'transparent', color: selectedElement.fontWeight === weight.value ? '#0EA5E9' : '#6B7280', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', boxShadow: selectedElement.fontWeight === weight.value ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}>{weight.label}</button>
-                                   ))}
-                               </div>
-                           </div>
-
-                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
-
-                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Apagar Ferramenta Textual</button>
-                        </div>
-                    )}
-                    {selectedElement && selectedElement.type === 'image' && (
-                        <div>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
-                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Configurações da Imagem</h3>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                               <div style={{ width: '3px', height: '14px', background: '#0762C8', borderRadius: '3px' }}/>
+                               <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F9FAFB' }}>Ajustar Imagem</h3>
                            </div>
                            
                            {selectedElement.content.endsWith('.svg') && (
-                               <div style={{ marginBottom: '20px' }}>
-                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Pigmento Vetorial (Para Máscaras)</label>
+                               <div style={{ marginBottom: '16px' }}>
+                                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pigmento Vetorial</label>
                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
-                                      {C8_COLORS.slice(0, 11).map(c => (
-                                          <div key={c} onClick={() => updateElement(selectedElement.id, { color: c })} style={{ width: '16px', height: '16px', borderRadius: '4px', background: c, cursor: 'pointer', border: selectedElement.color === c ? '2px solid #0EA5E9' : '1px solid #E5E7EB' }} title={c} />
+                                      {C8_COLORS_FLAT.slice(0, 20).map(c => (
+                                          <div key={c} onClick={() => updateElement(selectedElement.id, { color: c })} style={{ width: '18px', height: '18px', borderRadius: '4px', background: c, cursor: 'pointer', border: selectedElement.color === c ? '2px solid #E87722' : '1px solid rgba(255,255,255,0.1)' }} title={c} />
                                       ))}
                                    </div>
-                                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: '8px', padding: '4px 8px' }}>
-                                       <input type="color" value={selectedElement.color || '#FFFFFF'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '24px', height: '24px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
-                                       <span style={{ fontSize: '12px', color: '#4B5563', fontFamily: 'monospace' }}>{selectedElement.color || 'Original'}</span>
+                                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '7px', padding: '5px 8px' }}>
+                                       <input type="color" value={selectedElement.color || '#FEFEFB'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '22px', height: '22px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
+                                       <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>{selectedElement.color || 'Sem cor'}</span>
                                        {selectedElement.color && (
-                                           <button onClick={() => updateElement(selectedElement.id, { color: undefined })} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', fontSize: '11px', fontWeight: 700 }}>Remover Cor</button>
+                                           <button onClick={() => updateElement(selectedElement.id, { color: undefined })} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontSize: '11px', fontWeight: 700 }}>✕</button>
                                        )}
                                    </div>
                                </div>
                            )}
 
-                           <div style={{ marginTop: '20px' }}>
-                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Espaço Visual (Largura)</label>
-                               <input type="range" min="50" max="1500" value={selectedElement.width || 300} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#0EA5E9' }} />
+                           <div>
+                               <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Largura (px)</label>
+                               <input type="range" min="50" max="1500" value={selectedElement.width || 300} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#E87722' }} />
+                               <div style={{ textAlign: 'right', fontSize: '11px', color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>{selectedElement.width}px</div>
                            </div>
 
-                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
-
-                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Apagar Elemento Gráfico</button>
+                           <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.06)', margin: '16px 0' }} />
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '9px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171', borderRadius: '7px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Apagar Elemento</button>
                         </div>
                     )}
-                    {selectedElement && selectedElement.type === 'raw-html' && (
+
+                    {/* Propriedades de Texto */}
+                    {selectedElement && selectedElement.type === 'text' && (
                         <div>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                               <div style={{ width: '4px', height: '16px', background: '#F59E0B', borderRadius: '4px' }}></div>
-                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Módulo Legado (GrapesJS)</h3>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                               <div style={{ width: '3px', height: '14px', background: '#2DCCD3', borderRadius: '3px' }}/>
+                               <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F9FAFB' }}>Ajustar Tipografia</h3>
                            </div>
                            
-                           <p style={{ fontSize: '12px', color: '#6B7280', marginBottom: '16px', lineHeight: 1.4 }}>
-                               Este slide veio do construtor antigo. Você pode <b>clicar duas vezes no texto à esquerda</b> para editar livremente.<br/><br/>
-                               Ou, se preferir ou precisar de variáveis complexas, altere o código bruto abaixo:
+                           <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Conteúdo</label>
+                           <textarea 
+                             value={selectedElement.content} 
+                             onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} 
+                             style={{ 
+                               width: '100%', minHeight: '100px', 
+                               background: 'rgba(255,255,255,0.04)', 
+                               color: '#F9FAFB', 
+                               border: '1px solid rgba(255,255,255,0.1)', 
+                               padding: '10px', borderRadius: '7px', 
+                               fontFamily: "'Unitea Sans', sans-serif", fontSize: '13px', 
+                               resize: 'vertical', boxSizing: 'border-box'
+                             }}
+                           />
+
+                           {/* Tamanho + Cor */}
+                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '14px' }}>
+                               <div>
+                                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tamanho</label>
+                                   <input type="number" value={selectedElement.fontSize || 72} onChange={(e) => updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) })} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', color: '#F9FAFB', border: '1px solid rgba(255,255,255,0.1)', padding: '7px 10px', borderRadius: '7px', boxSizing: 'border-box' }} />
+                               </div>
+                               <div>
+                                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Largura</label>
+                                   <input type="number" value={selectedElement.width || 900} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', color: '#F9FAFB', border: '1px solid rgba(255,255,255,0.1)', padding: '7px 10px', borderRadius: '7px', boxSizing: 'border-box' }} />
+                               </div>
+                           </div>
+
+                           {/* Cor do Texto */}
+                           <div style={{ marginTop: '14px' }}>
+                               <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cor do Texto</label>
+                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
+                                  {C8_COLORS_FLAT.slice(0, 22).map(c => (
+                                      <div key={c} onClick={() => updateElement(selectedElement.id, { color: c })} style={{ width: '18px', height: '18px', borderRadius: '4px', background: c, cursor: 'pointer', border: selectedElement.color === c ? '2px solid #E87722' : '1px solid rgba(255,255,255,0.1)' }} title={c} />
+                                  ))}
+                               </div>
+                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '7px', padding: '5px 8px' }}>
+                                   <input type="color" value={selectedElement.color || '#FEFEFB'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '22px', height: '22px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
+                                   <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>{selectedElement.color}</span>
+                               </div>
+                           </div>
+
+                           {/* Alinhamento */}
+                           <div style={{ marginTop: '14px' }}>
+                               <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Alinhamento</label>
+                               <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: '7px' }}>
+                                   {[
+                                      { value: 'left',   label: '⬅' },
+                                      { value: 'center', label: '↔' },
+                                      { value: 'right',  label: '➡' }
+                                   ].map(align => (
+                                       <button key={align.value} onClick={() => updateElement(selectedElement.id, { textAlign: align.value as any })} style={{ flex: 1, padding: '6px', background: selectedElement.textAlign === align.value ? '#E87722' : 'transparent', color: selectedElement.textAlign === align.value ? '#FFF' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '5px', fontSize: '14px', cursor: 'pointer' }}>{align.label}</button>
+                                   ))}
+                               </div>
+                           </div>
+
+                           {/* Peso */}
+                           <div style={{ marginTop: '14px' }}>
+                               <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.4)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Peso</label>
+                               <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: '7px' }}>
+                                   {[
+                                     { value: '300', label: 'Light' },
+                                     { value: '400', label: 'Normal' },
+                                     { value: '600', label: 'Semi' },
+                                     { value: '700', label: 'Bold' },
+                                     { value: '900', label: 'Black' }
+                                   ].map(weight => (
+                                       <button key={weight.value} onClick={() => updateElement(selectedElement.id, { fontWeight: weight.value })} style={{ flex: 1, padding: '5px 2px', background: selectedElement.fontWeight === weight.value ? '#E87722' : 'transparent', color: selectedElement.fontWeight === weight.value ? '#FFF' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '5px', fontSize: '10px', fontWeight: 700, cursor: 'pointer' }}>{weight.label}</button>
+                                   ))}
+                               </div>
+                           </div>
+
+                           <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.06)', margin: '16px 0' }} />
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '9px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171', borderRadius: '7px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Apagar Texto</button>
+                        </div>
+                    )}
+
+                    {/* Módulo Legado */}
+                    {selectedElement && selectedElement.type === 'raw-html' && (
+                        <div>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                               <div style={{ width: '3px', height: '14px', background: '#FFCD00', borderRadius: '3px' }}/>
+                               <h3 style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F9FAFB' }}>Módulo Legado</h3>
+                           </div>
+                           
+                           <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '12px', lineHeight: 1.5 }}>
+                               Slide do editor antigo. Edite o código abaixo ou clique direto no canvas para editar inline.
                            </p>
 
-                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Código Visual (HTML Original)</label>
-                           <textarea value={selectedElement.content} onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} style={{ width: '100%', minHeight: '300px', background: '#111827', color: '#10B981', border: 'none', padding: '12px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '11px', resize: 'vertical' }}></textarea>
+                           <textarea value={selectedElement.content} onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })} style={{ width: '100%', minHeight: '240px', background: '#0A0B10', color: '#10B981', border: '1px solid rgba(255,255,255,0.05)', padding: '10px', borderRadius: '7px', fontFamily: 'monospace', fontSize: '10px', resize: 'vertical', boxSizing: 'border-box' }} />
 
-                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
-
-                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Excluir Bloco Legado Inteiro</button>
+                           <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.06)', margin: '16px 0' }} />
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '9px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171', borderRadius: '7px', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}>Excluir Bloco Legado</button>
                         </div>
                     )}
                 </div>
@@ -799,4 +1056,3 @@ ${inner}  </div>
     </div>
   );
 }
-
