@@ -86,9 +86,10 @@ interface SlideDef {
   filename: string;
   elements: FrameElement[];
   backgroundColor: string;
-  isDynamic?: boolean;
-  duration?: number;      // segundos (estático) ou undefined (dinâmico/auto)
-  roteiroOrder?: number;  // posição no roteiro 1-based
+  isDynamic?: boolean;      // true = tem {{ variaveis }}, false = conteudo fixo
+  hasNarration?: boolean;   // true (padrão) = duração pelo áudio / false = duração manual
+  duration?: number;        // segundos — só usado quando hasNarration = false
+  roteiroOrder?: number;    // posição no roteiro 1-based
 }
 
 // ─── Sub-componente: Autocomplete de Variáveis Jinja ─────────────────────────
@@ -414,18 +415,25 @@ ${inner}  </div>
         const num = parseInt(baseNumMatch[1], 10);
         try {
           const cfg = await apiGet(`/api/config/funnels/${funnelId}/slides`);
-          if (cfg?.order) {
-            const order: number[] = cfg.order.includes(num) ? cfg.order : [...cfg.order, num];
-            const durations: Record<string, number> = {};
-            (cfg.slides || []).forEach((s: any) => { if (s.duration) durations[String(s.num)] = s.duration; });
-            // Aplicar duração do slide atual se estático
-            if (!slide.isDynamic && slide.duration) durations[String(num)] = slide.duration;
-            await apiPut(`/api/config/funnels/${funnelId}/slides`, { order, durations });
+          const order: number[] = (cfg?.order || []).includes(num)
+            ? (cfg?.order || [])
+            : [...(cfg?.order || []), num].sort((a, b) => a - b);
+          const durations: Record<string, number> = {};
+          (cfg?.slides || []).forEach((s: any) => { if (s.duration) durations[String(s.num)] = s.duration; });
+          // Duração manual apenas quando slide não tem narração própria
+          if (slide.hasNarration === false && slide.duration) {
+            durations[String(num)] = slide.duration;
+          } else {
+            // Remove duração fixa — o assembler calculará pelo áudio
+            delete durations[String(num)];
           }
+          await apiPut(`/api/config/funnels/${funnelId}/slides`, { order, durations });
         } catch (e) { console.warn('Sync roteiro falhou', e); }
       }
 
-      if (!quiet) alert(`✅ Lâmina "${slide.filename}" salva${slide.isDynamic ? ' (Dinâmica)' : ` (Estática — ${slide.duration ?? '?'}s)`}`);
+      const tipo = slide.isDynamic !== false ? 'Dinâmico (variáveis Jinja)' : 'Estático (conteúdo fixo)';
+      const audio = slide.hasNarration === false ? ` — sem narração, ${slide.duration ?? 5}s fixos` : ' — duração pelo áudio';
+      if (!quiet) alert(`✅ "${slide.filename}" salva\n${tipo}${audio}`);
     } catch (e: any) {
       console.error(e);
       const msg = e?.message || e?.detail || JSON.stringify(e);
@@ -809,34 +817,60 @@ ${inner}  </div>
                   {/* ─── CONFIGURAÇÃO DO ROTEIRO ─── */}
                   <SectionHeader color="#2DCCD3" label="Configuração do Roteiro" />
                   <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
-                    {/* Toggle Dinâmico / Estático */}
-                    <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: '6px', marginBottom: '12px' }}>
+
+                    {/* Toggle Dinâmico / Estático = sobre conteúdo */}
+                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      Conteúdo do Slide
+                    </div>
+                    <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: '6px', marginBottom: '8px' }}>
                       <button onClick={() => updateSlide({ ...currentSlide, isDynamic: true })}
-                        style={{ flex: 1, padding: '7px', background: currentSlide.isDynamic !== false ? '#2DCCD3' : 'transparent', color: currentSlide.isDynamic !== false ? '#0A0B10' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                        style={{ flex: 1, padding: '7px', background: currentSlide.isDynamic !== false ? '#2DCCD3' : 'transparent', color: currentSlide.isDynamic !== false ? '#0A0B10' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '11px' }}>
                         ⚡ Dinâmico
                       </button>
                       <button onClick={() => updateSlide({ ...currentSlide, isDynamic: false })}
-                        style={{ flex: 1, padding: '7px', background: currentSlide.isDynamic === false ? '#E87722' : 'transparent', color: currentSlide.isDynamic === false ? '#FFF' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                        style={{ flex: 1, padding: '7px', background: currentSlide.isDynamic === false ? '#E87722' : 'transparent', color: currentSlide.isDynamic === false ? '#FFF' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '11px' }}>
                         📌 Estático
                       </button>
                     </div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', lineHeight: 1.5, marginBottom: '14px' }}>
+                      {currentSlide.isDynamic !== false
+                        ? <><span style={{ color: '#2DCCD3', fontWeight: 700 }}>⚡ Dinâmico</span> — usa <code style={{ color: '#E87722', fontSize: '11px' }}>{`{{ variáveis }}`}</code> (nome, empresa, cargo…) personalizadas por lead.</>
+                        : <><span style={{ color: '#E87722', fontWeight: 700 }}>📌 Estático</span> — conteúdo idêntico para todos os leads. Sem variáveis Jinja.</>
+                      }
+                    </div>
 
-                    {currentSlide.isDynamic !== false ? (
-                      <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
-                        <span style={{ color: '#2DCCD3', fontWeight: 700 }}>⚡ Dinâmico</span> — o roteiro injeta variáveis Jinja (<code style={{ color: '#E87722' }}>{'{{ nome }}'}</code> etc.) neste slide. A duração é calculada automaticamente pelo áudio.
-                      </div>
-                    ) : (
+                    {/* Toggle Narração = sobre duração */}
+                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      Duração no Vídeo
+                    </div>
+                    <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: '6px', marginBottom: '8px' }}>
+                      <button onClick={() => updateSlide({ ...currentSlide, hasNarration: true })}
+                        style={{ flex: 1, padding: '6px', background: currentSlide.hasNarration !== false ? '#4A90D9' : 'transparent', color: currentSlide.hasNarration !== false ? '#FFF' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '11px' }}>
+                        🎙 Pelo áudio
+                      </button>
+                      <button onClick={() => updateSlide({ ...currentSlide, hasNarration: false, duration: currentSlide.duration ?? 5 })}
+                        style={{ flex: 1, padding: '6px', background: currentSlide.hasNarration === false ? '#7E7E7A' : 'transparent', color: currentSlide.hasNarration === false ? '#FFF' : 'rgba(255,255,255,0.4)', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '11px' }}>
+                        ⏱ Manual
+                      </button>
+                    </div>
+
+                    {currentSlide.hasNarration === false ? (
                       <div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginBottom: '10px' }}>
-                          <span style={{ color: '#E87722', fontWeight: 700 }}>📌 Estático</span> — slide fixo, sem variáveis. Define a duração abaixo.
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginBottom: '8px' }}>
+                          Slide sem narração própria (transição, intro animada, etc). Define a duração fixa:
                         </div>
-                        <label style={labelStyle}>Duração: {currentSlide.duration ?? 5}s</label>
-                        <input type="range" min={1} max={30} step={0.5} value={currentSlide.duration ?? 5}
+                        <label style={labelStyle}>Duração fixa: {currentSlide.duration ?? 5}s</label>
+                        <input type="range" min={0.5} max={30} step={0.5} value={currentSlide.duration ?? 5}
                           onChange={e => updateSlide({ ...currentSlide, duration: parseFloat(e.target.value) })}
                           style={{ width: '100%', accentColor: '#E87722' }} />
                       </div>
+                    ) : (
+                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', lineHeight: 1.5 }}>
+                        🎙 Duração calculada automaticamente pelo áudio da narração (válido para slides Dinâmicos <em>e</em> Estáticos).
+                      </div>
                     )}
                   </div>
+
 
                   <Divider />
                   {currentSlide.elements.some(x => x.type === 'raw-html') && (
