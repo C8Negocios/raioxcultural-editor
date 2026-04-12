@@ -181,11 +181,15 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   const addImageElement = (url: string) => {
      const s = getSelectedSlide();
      if(!s) return;
+     let defaultWidth = 500;
+     if (url.includes('/logos/')) defaultWidth = 250;
+     else if (url.includes('/graphics/')) defaultWidth = 350;
+
      const newEl: FrameElement = {
          id: Math.random().toString(36).substr(2,9),
          type: 'image',
          content: url,
-         x: 300, y: 300, width: 500, // deafult mid-size
+         x: 300, y: 300, width: defaultWidth,
          zIndex: s.elements.length + 1
      };
      updateSlide({ ...s, elements: [...s.elements, newEl] });
@@ -250,7 +254,14 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
              const safeText = el.content.replace(/\n/g, '<br/>');
              inner += `<div style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; font-size:${el.fontSize}px; color:${el.color}; font-weight:${el.fontWeight}; text-align:${el.textAlign}; font-family:'Unitea Sans', sans-serif; z-index:${el.zIndex}">${safeText}</div>\n`;
          } else if (el.type === 'image') {
-             inner += `<img src="${el.content}" style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; z-index:${el.zIndex}; pointer-events: none;" />\n`;
+             if (el.content.endsWith('.svg') && el.color) {
+                 inner += `<div style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; z-index:${el.zIndex}; pointer-events:none;">\n`;
+                 inner += `    <img src="${el.content}" style="width:100%; height:auto; display:block; opacity:0;" />\n`;
+                 inner += `    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background-color:${el.color}; -webkit-mask-image:url('${el.content}'); mask-image:url('${el.content}'); -webkit-mask-size:contain; mask-size:contain; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center;"></div>\n`;
+                 inner += `</div>\n`;
+             } else {
+                 inner += `<img src="${el.content}" style="position:absolute; left:${Math.round(el.x)}px; top:${Math.round(el.y)}px; width:${el.width}px; height:auto; z-index:${el.zIndex}; pointer-events:none;" />\n`;
+             }
          }
       }
    
@@ -518,7 +529,21 @@ ${inner}  </div>
                                        </div>
                                     )}
                                     {el.type === 'image' && (
-                                       <img src={el.content} draggable={false} style={{ width: '100%', height: '100%', pointerEvents: 'none', display: 'block' }} />
+                                       <div style={{ position: 'relative', width: '100%', display: 'flex' }}>
+                                           {/* Imagem Transparente dita os limites (Aspect Ratio Native) */}
+                                           <img src={el.content} draggable={false} style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none', opacity: (el.content.endsWith('.svg') && el.color) ? 0 : 1, objectFit: 'contain' }} />
+                                           
+                                           {/* Mascara de SVG injetando cor (Se habilitada) */}
+                                           {(el.content.endsWith('.svg') && el.color) && (
+                                               <div style={{ 
+                                                   position: 'absolute', inset: 0,
+                                                   backgroundColor: el.color,
+                                                   maskImage: `url('${el.content}')`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center',
+                                                   WebkitMaskImage: `url('${el.content}')`, WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center',
+                                                   pointerEvents: 'none'
+                                               }} />
+                                           )}
+                                       </div>
                                     )}
                                 </div>
                              );
@@ -550,8 +575,8 @@ ${inner}  </div>
                         <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Fundos & Texturas 3D</h4>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                             {c8Assets.backgrounds.map((bg) => (
-                               <div key={bg.id} onClick={() => currentSlide && updateSlide({...currentSlide, backgroundColor: `url('${bg.url}')`})} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', height: '60px', transition: 'all 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.borderColor='#0EA5E9'} onMouseLeave={(e)=>e.currentTarget.style.borderColor='#E5E7EB'}>
-                                   <div style={{ width: '100%', height: '100%', backgroundImage: `url('${bg.url}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                               <div key={bg.id} onClick={() => currentSlide && updateSlide({...currentSlide, backgroundColor: `url('${bg.url}')`})} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', height: '60px', transition: 'all 0.2s', position: 'relative' }} onMouseEnter={(e)=>e.currentTarget.style.borderColor='#0EA5E9'} onMouseLeave={(e)=>e.currentTarget.style.borderColor='#E5E7EB'}>
+                                   <img src={bg.url} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                                </div>
                             ))}
                         </div>
@@ -562,7 +587,7 @@ ${inner}  </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                             {c8Assets.graphics.map((gr) => (
                                <div key={gr.id} onClick={() => addImageElement(gr.url)} style={{ background: gr.id.includes('branco-padrao') ? '#00205B' : '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', transition: 'transform 0.1s' }} onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={(e)=>e.currentTarget.style.transform='none'}>
-                                   <img src={gr.url} style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain' }} />
+                                   <img src={gr.url} loading="lazy" decoding="async" style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain', display: 'block' }} />
                                </div>
                             ))}
                         </div>
@@ -573,7 +598,7 @@ ${inner}  </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                             {c8Assets.logos.map((lg) => (
                                <div key={lg.id} onClick={() => addImageElement(lg.url)} style={{ background: lg.id.includes('branco') ? '#111827' : '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', transition: 'transform 0.1s' }} onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={(e)=>e.currentTarget.style.transform='none'}>
-                                   <img src={lg.url} style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain' }} />
+                                   <img src={lg.url} loading="lazy" decoding="async" style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain', display: 'block' }} />
                                </div>
                             ))}
                         </div>
@@ -695,6 +720,41 @@ ${inner}  </div>
                            <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
 
                            <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Apagar Ferramenta Textual</button>
+                        </div>
+                    )}
+                    {selectedElement && selectedElement.type === 'image' && (
+                        <div>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                               <div style={{ width: '4px', height: '16px', background: '#0EA5E9', borderRadius: '4px' }}></div>
+                               <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Configurações da Imagem</h3>
+                           </div>
+                           
+                           {selectedElement.content.endsWith('.svg') && (
+                               <div style={{ marginBottom: '20px' }}>
+                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Pigmento Vetorial (Para Máscaras)</label>
+                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
+                                      {C8_COLORS.slice(0, 11).map(c => (
+                                          <div key={c} onClick={() => updateElement(selectedElement.id, { color: c })} style={{ width: '16px', height: '16px', borderRadius: '4px', background: c, cursor: 'pointer', border: selectedElement.color === c ? '2px solid #0EA5E9' : '1px solid #E5E7EB' }} title={c} />
+                                      ))}
+                                   </div>
+                                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: '8px', padding: '4px 8px' }}>
+                                       <input type="color" value={selectedElement.color || '#FFFFFF'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '24px', height: '24px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
+                                       <span style={{ fontSize: '12px', color: '#4B5563', fontFamily: 'monospace' }}>{selectedElement.color || 'Original'}</span>
+                                       {selectedElement.color && (
+                                           <button onClick={() => updateElement(selectedElement.id, { color: undefined })} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', fontSize: '11px', fontWeight: 700 }}>Remover Cor</button>
+                                       )}
+                                   </div>
+                               </div>
+                           )}
+
+                           <div style={{ marginTop: '20px' }}>
+                               <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Espaço Visual (Largura)</label>
+                               <input type="range" min="50" max="1500" value={selectedElement.width || 300} onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#0EA5E9' }} />
+                           </div>
+
+                           <hr style={{ border: 'none', borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
+
+                           <button onClick={deleteSelectedElement} style={{ width: '100%', padding: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Apagar Elemento Gráfico</button>
                         </div>
                     )}
                     {selectedElement && selectedElement.type === 'raw-html' && (
