@@ -441,6 +441,19 @@ ${inner}  </div>
     return () => window.removeEventListener('keydown', fn);
   }, [slides, selectedSlideIndex]);
 
+  // ── Estimativa de altura do elemento ────────────────────────────────────────
+  const estimateHeight = (el: FrameElement): number => {
+    if (el.type === 'text') {
+      const lines = (el.content || '').split('\n').length;
+      return (el.fontSize ?? 72) * (el.lineHeight ?? 1.2) * lines;
+    }
+    if (el.type === 'image' && el.width) {
+      // assume aspect ratio 16:9 para imagens landscape, ou quadrado para logos
+      return el.height ?? el.width * 0.5625;
+    }
+    return 200;
+  };
+
   // ── Render helpers ─────────────────────────────────────────────────────────
   const currentSlide = getSlide();
   const selectedElement = currentSlide?.elements.find(e => e.id === selectedElementId);
@@ -739,6 +752,12 @@ ${inner}  </div>
                   <ColorPicker value={selectedElement.color ?? '#FEFEFB'} onChange={v => updateElement(selectedElement.id, { color: v })} />
 
                   <Divider />
+
+                  {/* Posicionamento do elemento de texto */}
+                  <SectionHeader color="#7DE5E9" label="Posicionamento" />
+                  <AlignmentTools el={selectedElement} onUpdate={(changes) => updateElement(selectedElement.id, changes)} estimateHeight={estimateHeight} />
+
+                  <Divider />
                   <DangerButton label="Apagar Texto" onClick={deleteSelectedElement} />
                 </div>
               )}
@@ -755,6 +774,13 @@ ${inner}  </div>
                   )}
                   <label style={{ ...labelStyle, marginTop: '12px' }}>Largura: {selectedElement.width}px</label>
                   <input type="range" min={50} max={1800} value={selectedElement.width ?? 300} onChange={e => updateElement(selectedElement.id, { width: parseInt(e.target.value) })} style={{ width: '100%', accentColor: '#E87722' }} />
+
+                  <Divider />
+
+                  {/* Posicionamento do elemento de imagem */}
+                  <SectionHeader color="#7DE5E9" label="Posicionamento" />
+                  <AlignmentTools el={selectedElement} onUpdate={(changes) => updateElement(selectedElement.id, changes)} estimateHeight={estimateHeight} />
+
                   <Divider />
                   <DangerButton label="Apagar Imagem" onClick={deleteSelectedElement} />
                 </div>
@@ -871,3 +897,107 @@ function DangerButton({ label, onClick }: { label: string; onClick: () => void }
     </button>
   );
 }
+
+// ─── AlignmentTools ───────────────────────────────────────────────────────────
+// Alinha elementos dentro do canvas 1920×1080
+function AlignmentTools({
+  el,
+  onUpdate,
+  estimateHeight,
+}: {
+  el: { x: number; y: number; width?: number; zIndex: number };
+  onUpdate: (changes: Record<string, any>) => void;
+  estimateHeight: (el: any) => number;
+}) {
+  const W = 1920;
+  const H = 1080;
+  const w = el.width ?? 300;
+  const h = estimateHeight(el as any);
+
+  const alignH = [
+    { icon: '⬛◻◻', title: 'Alinhar à esquerda',  action: () => onUpdate({ x: 0 }) },
+    { icon: '◻⬛◻', title: 'Centralizar horizontal', action: () => onUpdate({ x: Math.round((W - w) / 2) }) },
+    { icon: '◻◻⬛', title: 'Alinhar à direita',  action: () => onUpdate({ x: Math.round(W - w) }) },
+  ];
+
+  const alignV = [
+    { icon: '⬛', title: 'Alinhar ao topo',          action: () => onUpdate({ y: 0 }) },
+    { icon: '◈', title: 'Centralizar vertical',      action: () => onUpdate({ y: Math.round((H - h) / 2) }) },
+    { icon: '◻', title: 'Alinhar à base',             action: () => onUpdate({ y: Math.round(H - h) }) },
+  ];
+
+  const alignHIcons  = ['←', '↔', '→'];
+  const alignVIcons  = ['↑', '↕', '↓'];
+  const alignHTitles = ['Alinhar esquerda (x=0)', 'Centralizar H', 'Alinhar direita'];
+  const alignVTitles = ['Alinhar topo (y=0)', 'Centralizar V', 'Alinhar base'];
+  const alignHFns    = [() => onUpdate({ x: 0 }), () => onUpdate({ x: Math.round((W - w) / 2) }), () => onUpdate({ x: Math.round(W - w) })];
+  const alignVFns    = [() => onUpdate({ y: 0 }), () => onUpdate({ y: Math.round((H - h) / 2) }), () => onUpdate({ y: Math.round(H - h) })];
+
+  const btnStyle = (accent?: string): React.CSSProperties => ({
+    flex: 1, padding: '7px 4px', background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)',
+    borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 700,
+    transition: 'all 0.12s',
+  });
+
+  return (
+    <div>
+      {/* Alinhamento Horizontal */}
+      <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' }}>Horizontal</div>
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+        {alignHIcons.map((icon, i) => (
+          <button key={i} title={alignHTitles[i]} onClick={alignHFns[i]}
+            style={btnStyle()}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(125,229,233,0.15)'; e.currentTarget.style.color = '#7DE5E9'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}>
+            {icon}
+          </button>
+        ))}
+      </div>
+
+      {/* Alinhamento Vertical */}
+      <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '5px' }}>Vertical</div>
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '12px' }}>
+        {alignVIcons.map((icon, i) => (
+          <button key={i} title={alignVTitles[i]} onClick={alignVFns[i]}
+            style={btnStyle()}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(125,229,233,0.15)'; e.currentTarget.style.color = '#7DE5E9'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}>
+            {icon}
+          </button>
+        ))}
+      </div>
+
+      {/* Coordenadas X / Y */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+        {[
+          { label: 'X (px)', val: Math.round(el.x), key: 'x' },
+          { label: 'Y (px)', val: Math.round(el.y), key: 'y' },
+        ].map(f => (
+          <div key={f.key}>
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{f.label}</div>
+            <input type="number" value={f.val}
+              onChange={e => onUpdate({ [f.key]: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', color: '#F9FAFB', border: '1px solid rgba(255,255,255,0.1)', padding: '5px 7px', borderRadius: '5px', fontSize: '12px', boxSizing: 'border-box', fontFamily: 'monospace' }} />
+          </div>
+        ))}
+      </div>
+
+      {/* Z-Index (frente / trás) */}
+      <div style={{ display: 'flex', gap: '4px' }}>
+        <button onClick={() => onUpdate({ zIndex: (el.zIndex ?? 1) + 1 })} title="Trazer para frente"
+          style={{ flex: 1, padding: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', borderRadius: '5px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
+          ↑ Frente (Z+)
+        </button>
+        <button onClick={() => onUpdate({ zIndex: Math.max(1, (el.zIndex ?? 1) - 1) })} title="Enviar para trás"
+          style={{ flex: 1, padding: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', borderRadius: '5px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
+          ↓ Trás (Z-)
+        </button>
+      </div>
+      <div style={{ textAlign: 'center', fontSize: '10px', color: 'rgba(255,255,255,0.2)', marginTop: '4px', fontFamily: 'monospace' }}>
+        z-index: {el.zIndex}
+      </div>
+    </div>
+  );
+}
+
