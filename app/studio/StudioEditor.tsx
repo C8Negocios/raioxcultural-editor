@@ -2,8 +2,15 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { apiGet, apiPut } from '../lib/api';
+import c8Assets from './c8-assets.json';
 
 type ElementType = 'text' | 'image' | 'raw-html';
+
+const C8_COLORS = [
+  '#FEFEFB', '#EAEAE6', '#C1C1BB', '#7E7E7A', '#51514E',
+  '#101010', '#1B1B1A', '#292927', '#363634', '#444441',
+  '#00205B', 'transparent'
+];
 
 interface FrameElement {
   id: string;
@@ -44,10 +51,6 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
 
   // ============== 1. Initialization ==============
   useEffect(() => {
-    // Carregar Banco de Mídias C8
-    fetch('/api/assets').then(r=>r.json()).then(d=>{
-        if(d.assets) setAssets(d.assets);
-    }).catch(console.error);
 
     // Carregar Lâminas (Slides HTML) do diretório
     apiGet(`/api/config/funnels/${funnelId}/templates`).then((res: any[]) => {
@@ -102,15 +105,16 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
 
 
   // ============== 2. Ações do Sistema de Slides ==============
-  const addSlide = () => {
+  const addSlide = async () => {
      const nextNum = slides.length + 1;
      const filename = `slide_${nextNum.toString().padStart(2, '0')}.html`;
      const newS: SlideDef = { filename, backgroundColor: '#FEFEFB', elements: [] };
      setSlides([...slides, newS]);
      setSelectedSlideIndex(slides.length);
+     await handleSaveWorkspace(newS, true);
   };
 
-  const duplicateAsVariant = () => {
+  const duplicateAsVariant = async () => {
      const current = slides[selectedSlideIndex];
      const suffix = prompt("Nome da Variação Lógica (ex: score_0_20, error, null):");
      if (!suffix) return;
@@ -125,6 +129,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
      };
      setSlides([...slides, newS]);
      setSelectedSlideIndex(slides.length);
+     await handleSaveWorkspace(newS, true);
   };
 
   const deleteCurrentSlide = () => {
@@ -256,7 +261,7 @@ export default function StudioEditor({ funnelId = "raiox-cultural" }: { funnelId
   <style>
     @font-face { font-family: 'Unitea Sans'; src: url('/fonts/Unitea Sans/UniteaSans-Regular.ttf') format('truetype'); font-weight: 400; }
     @font-face { font-family: 'Unitea Sans'; src: url('/fonts/Unitea Sans/UniteaSans-Bold.ttf') format('truetype'); font-weight: 700; }
-    body { margin: 0; padding: 0; font-family: 'Unitea Sans', sans-serif; background: ${slide.backgroundColor}; overflow:hidden; }
+    body { margin: 0; padding: 0; font-family: 'Unitea Sans', sans-serif; background: ${slide.backgroundColor.includes('url') ? slide.backgroundColor + ' center/cover no-repeat' : slide.backgroundColor}; overflow:hidden; }
     .c8-canvas { width: 1920px; height: 1080px; position:relative; overflow:hidden; }
   </style>
 </head>
@@ -268,10 +273,10 @@ ${inner}  </div>
 </html>`;
   };
 
-  const handleSaveWorkspace = async () => {
+  const handleSaveWorkspace = async (slideParam?: SlideDef, hideAlert?: boolean) => {
      setSaving(true);
      try {
-         const slide = getSelectedSlide();
+         const slide = slideParam || getSelectedSlide();
          if (!slide) return;
          
          const payload = {
@@ -318,7 +323,7 @@ ${inner}  </div>
              console.error("Falha ao injetar slide automaticamente na timeline", e);
          }
 
-         alert("🔥 Design Gravado com Sucesso! (Sincronizado no Roteiro)");
+         if(!hideAlert) alert("🔥 Design Gravado com Sucesso! (Sincronizado no Roteiro)");
      } catch (e) {
          console.error(e);
          alert("Falha de gravação.");
@@ -419,7 +424,7 @@ ${inner}  </div>
              onMouseMove={handleMouseMove}
              onMouseUp={handleMouseUp}
              onMouseLeave={handleMouseUp}
-             onClick={() => setSelectedElementId(null)}
+             onMouseDown={() => setSelectedElementId(null)}
          >
              {!currentSlide && <div style={{ color: '#9CA3AF', fontWeight: 500 }}>Crie ou selecione uma lâmina para começar.</div>}
              
@@ -529,8 +534,8 @@ ${inner}  </div>
              {/* Navegação entre Inserir e Editar (Design Segmentado Estilo Apple) */}
              <div style={{ padding: '16px', borderBottom: '1px solid #F3F4F6' }}>
                  <div style={{ background: '#F3F4F6', borderRadius: '8px', padding: '4px', display: 'flex' }}>
-                    <button onClick={() => setRightTab('assets')} style={{ flex: 1, padding: '8px', background: rightTab === 'assets' ? '#FFFFFF' : 'transparent', color: rightTab === 'assets' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'assets' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>Elementos</button>
-                    <button onClick={() => setRightTab('props')} style={{ flex: 1, padding: '8px', background: rightTab === 'props' ? '#FFFFFF' : 'transparent', color: rightTab === 'props' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'props' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>Ajustes</button>
+                    <button onClick={() => setRightTab('assets')} style={{ flex: 1, padding: '8px', background: rightTab === 'assets' ? '#FFFFFF' : 'transparent', color: rightTab === 'assets' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'assets' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>🎨 Ativos C8</button>
+                    <button onClick={() => setRightTab('props')} style={{ flex: 1, padding: '8px', background: rightTab === 'props' ? '#FFFFFF' : 'transparent', color: rightTab === 'props' ? '#111827' : '#6B7280', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', boxShadow: rightTab === 'props' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>⚙️ Ajustes</button>
                  </div>
              </div>
 
@@ -541,13 +546,37 @@ ${inner}  </div>
                         + Adicionar Texto Livre
                     </button>
 
-                    <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Ativos C8 Club</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                        {assets.map((src, i) => (
-                           <div key={i} onClick={() => addImageElement(src)} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '80px', transition: 'transform 0.1s, box-shadow 0.1s' }} onMouseEnter={(e)=>{e.currentTarget.style.transform='scale(1.02)'; e.currentTarget.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.05)'}} onMouseLeave={(e)=>{e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none'}}>
-                               <img src={src} style={{ maxWidth: '100%', maxHeight: '60px', objectFit: 'contain' }} />
-                           </div>
-                        ))}
+                    <div style={{ marginBottom: '24px' }}>
+                        <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Fundos & Texturas 3D</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                            {c8Assets.backgrounds.map((bg) => (
+                               <div key={bg.id} onClick={() => currentSlide && updateSlide({...currentSlide, backgroundColor: \`url('\${bg.url}')\`})} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', height: '60px', transition: 'all 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.borderColor='#0EA5E9'} onMouseLeave={(e)=>e.currentTarget.style.borderColor='#E5E7EB'}>
+                                   <div style={{ width: '100%', height: '100%', backgroundImage: \`url('\${bg.url}')\`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                               </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Grafismos de Apoio</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                            {c8Assets.graphics.map((gr) => (
+                               <div key={gr.id} onClick={() => addImageElement(gr.url)} style={{ background: gr.id.includes('branco-padrao') ? '#00205B' : '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', transition: 'transform 0.1s' }} onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={(e)=>e.currentTarget.style.transform='none'}>
+                                   <img src={gr.url} style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain' }} />
+                               </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Topologia e Marcas</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                            {c8Assets.logos.map((lg) => (
+                               <div key={lg.id} onClick={() => addImageElement(lg.url)} style={{ background: lg.id.includes('branco') ? '#111827' : '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', transition: 'transform 0.1s' }} onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={(e)=>e.currentTarget.style.transform='none'}>
+                                   <img src={lg.url} style={{ maxWidth: '100%', maxHeight: '40px', objectFit: 'contain' }} />
+                               </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
              )}
@@ -562,10 +591,15 @@ ${inner}  </div>
                                <h3 style={{ margin: '0', fontSize: '15px', fontWeight: 700, color: '#111827' }}>Fundo da Lâmina</h3>
                            </div>
                            
-                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Cor Sólida do Fundo</label>
+                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Cor Oficial / Hex</label>
+                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+                               {C8_COLORS.map(c => (
+                                   <div key={c} onClick={() => updateSlide({...currentSlide, backgroundColor: c})} style={{ width: '22px', height: '22px', borderRadius: '4px', background: c === 'transparent' ? 'repeating-conic-gradient(#E5E7EB 0% 25%, transparent 0% 50%) 50% / 8px 8px' : c, cursor: 'pointer', border: currentSlide.backgroundColor === c ? '2px solid #0EA5E9' : '1px solid #E5E7EB', outline: currentSlide.backgroundColor === c ? '2px solid #fff' : 'none', outlineOffset: '-2px' }} title={c} />
+                               ))}
+                           </div>
                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F9FAFB', padding: '8px', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                               <input type="color" value={currentSlide.backgroundColor} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '30px', height: '30px', cursor: 'pointer', border: 'none', padding: 0, background: 'transparent' }} />
-                               <span style={{ fontSize: '13px', color: '#4B5563', fontFamily: 'monospace' }}>{currentSlide.backgroundColor.toUpperCase()}</span>
+                               <input type="color" value={currentSlide.backgroundColor.includes('url') ? '#ffffff' : currentSlide.backgroundColor} onChange={(e) => updateSlide({...currentSlide, backgroundColor: e.target.value})} style={{ width: '30px', height: '30px', cursor: 'pointer', border: 'none', padding: 0, background: 'transparent' }} />
+                               <span style={{ fontSize: '13px', color: '#4B5563', fontFamily: 'monospace' }}>{currentSlide.backgroundColor.includes('url') ? 'Imagem (Bg)' : currentSlide.backgroundColor.toUpperCase()}</span>
                            </div>
                            <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '12px', lineHeight: 1.4 }}>Dica: Se preferir texturas como Nuvem Azul ou Grafismos, adicione as imagens pela aba <b>Elementos</b>.</p>
                            
@@ -613,7 +647,12 @@ ${inner}  </div>
                                    <input type="number" value={selectedElement.fontSize || 64} onChange={(e) => updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) })} style={{ width: '100%', background: '#F9FAFB', color: '#111827', border: '1px solid #D1D5DB', padding: '8px 12px', borderRadius: '8px' }} />
                                </div>
                                <div>
-                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Cor do Pigmento</label>
+                                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '8px' }}>Pigmento</label>
+                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
+                                      {C8_COLORS.slice(0, 11).map(c => (
+                                          <div key={c} onClick={() => updateElement(selectedElement.id, { color: c })} style={{ width: '16px', height: '16px', borderRadius: '4px', background: c, cursor: 'pointer', border: selectedElement.color === c ? '2px solid #0EA5E9' : '1px solid #E5E7EB' }} title={c} />
+                                      ))}
+                                   </div>
                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F9FAFB', border: '1px solid #D1D5DB', borderRadius: '8px', padding: '4px 8px' }}>
                                        <input type="color" value={selectedElement.color || '#00205B'} onChange={(e) => updateElement(selectedElement.id, { color: e.target.value })} style={{ width: '24px', height: '24px', border: 'none', padding: 0, background: 'transparent', cursor: 'pointer' }} />
                                        <span style={{ fontSize: '12px', color: '#4B5563', fontFamily: 'monospace' }}>{selectedElement.color}</span>

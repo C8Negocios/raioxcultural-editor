@@ -1,0 +1,554 @@
+{
+  "backgrounds": [
+    {
+      "id": "efeito-azul-texture-3d-categoria-01.jpg",
+      "url": "/assets/brand/backgrounds/efeito-azul-texture-3d-categoria-01.jpg",
+      "type": "background",
+      "name": "EFEITO=AZUL, TEXTURE=3D, CATEGORIA=01"
+    },
+    {
+      "id": "efeito-azul-texture-3d-categoria-02.jpg",
+      "url": "/assets/brand/backgrounds/efeito-azul-texture-3d-categoria-02.jpg",
+      "type": "background",
+      "name": "EFEITO=AZUL, TEXTURE=3D, CATEGORIA=02"
+    },
+    {
+      "id": "efeito-azul-texture-3d-categoria-03.jpg",
+      "url": "/assets/brand/backgrounds/efeito-azul-texture-3d-categoria-03.jpg",
+      "type": "background",
+      "name": "EFEITO=AZUL, TEXTURE=3D, CATEGORIA=03"
+    },
+    {
+      "id": "efeito-azul-texture-3d-categoria-04.jpg",
+      "url": "/assets/brand/backgrounds/efeito-azul-texture-3d-categoria-04.jpg",
+      "type": "background",
+      "name": "EFEITO=AZUL, TEXTURE=3D, CATEGORIA=04"
+    },
+    {
+      "id": "efeito-azul-texture-3d-categoria-05.jpg",
+      "url": "/assets/brand/backgrounds/efeito-azul-texture-3d-categoria-05.jpg",
+      "type": "background",
+      "name": "EFEITO=AZUL, TEXTURE=3D, CATEGORIA=05"
+    },
+    {
+      "id": "efeito-dark-texture-gradient-categoria-01.jpg",
+      "url": "/assets/brand/backgrounds/efeito-dark-texture-gradient-categoria-01.jpg",
+      "type": "background",
+      "name": "EFEITO=DARK, TEXTURE=GRADIENT, CATEGORIA=01"
+    },
+    {
+      "id": "efeito-dark-texture-gradient-categoria-02.jpg",
+      "url": "/assets/brand/backgrounds/efeito-dark-texture-gradient-categoria-02.jpg",
+      "type": "background",
+      "name": "EFEITO=DARK, TEXTURE=GRADIENT, CATEGORIA=02"
+    },
+    {
+      "id": "efeito-dark-texture-gradient-categoria-03.jpg",
+      "url": "/assets/brand/backgrounds/efeito-dark-texture-gradient-categoria-03.jpg",
+      "type": "background",
+      "name": "EFEITO=DARK, TEXTURE=GRADIENT, CATEGORIA=03"
+    },
+    {
+      "id": "efeito-light-texture-gradient-categoria-02.jpg",
+      "url": "/assets/brand/backgrounds/efeito-light-texture-gradient-categoria-02.jpg",
+      "type": "background",
+      "name": "EFEITO=LIGHT, TEXTURE=GRADIENT, CATEGORIA=02"
+    }
+  ],
+  "graphics": [
+    {
+      "id": "elementos-element-dark.png",
+      "url": "/assets/brand/graphics/elementos-element-dark.png",
+      "type": "graphic",
+      "name": "ELEMENTOS=ELEMENT DARK"
+    },
+    {
+      "id": "elementos-element-light.png",
+      "url": "/assets/brand/graphics/elementos-element-light.png",
+      "type": "graphic",
+      "name": "ELEMENTOS=ELEMENT LIGHT"
+    },
+    {
+      "id": "elementos-infinyte-3d.png",
+      "url": "/assets/brand/graphics/elementos-infinyte-3d.png",
+      "type": "graphic",
+      "name": "ELEMENTOS=INFINYTE 3D"
+    },
+    {
+      "id": "azul-escuro-padrao-pattern-1.svg",
+      "url": "/assets/brand/graphics/azul-escuro-padrao-pattern-1.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 1"
+    },
+    {
+      "id": "azul-escuro-padrao-pattern-2.svg",
+      "url": "/assets/brand/graphics/azul-escuro-padrao-pattern-2.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 2"
+    },
+    {
+      "id": "azul-escuro-padrao-pattern-3.svg",
+      "url": "/assets/brand/graphics/azul-escuro-padrao-pattern-3.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 3"
+    },
+    {
+      "id": "azul-escuro-padrao-pattern-4.svg",
+      "url": "/assets/brand/graphics/azul-escuro-padrao-pattern-4.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 4"
+    },
+    {
+      "id": "azul-escuro-padrao-pattern-5.svg",
+      "url": "/assets/brand/graphics/azul-escuro-padrao-pattern-5.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 5"
+    },
+    {
+      "id": "branco-padrao-pattern-1.svg",
+      "url": "/assets/brand/graphics/branco-padrao-pattern-1.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 1"
+    },
+    {
+      "id": "branco-padrao-pattern-2.svg",
+      "url": "/assets/brand/graphics/branco-padrao-pattern-2.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 2"
+    },
+    {
+      "id": "branco-padrao-pattern-3.svg",
+      "url": "/assets/brand/graphics/branco-padrao-pattern-3.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 3"
+    },
+    {
+      "id": "branco-padrao-pattern-4.svg",
+      "url": "/assets/brand/graphics/branco-padrao-pattern-4.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 4"
+    },
+    {
+      "id": "branco-padrao-pattern-5.svg",
+      "url": "/assets/brand/graphics/branco-padrao-pattern-5.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 5"
+    },
+    {
+      "id": "preto-padrao-pattern-1.svg",
+      "url": "/assets/brand/graphics/preto-padrao-pattern-1.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 1"
+    },
+    {
+      "id": "preto-padrao-pattern-2.svg",
+      "url": "/assets/brand/graphics/preto-padrao-pattern-2.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 2"
+    },
+    {
+      "id": "preto-padrao-pattern-3.svg",
+      "url": "/assets/brand/graphics/preto-padrao-pattern-3.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 3"
+    },
+    {
+      "id": "preto-padrao-pattern-4.svg",
+      "url": "/assets/brand/graphics/preto-padrao-pattern-4.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 4"
+    },
+    {
+      "id": "preto-padrao-pattern-5.svg",
+      "url": "/assets/brand/graphics/preto-padrao-pattern-5.svg",
+      "type": "graphic",
+      "name": "Padrão=PATTERN 5"
+    }
+  ],
+  "logos": [
+    {
+      "id": "branco-logo-c8-club.svg",
+      "url": "/assets/brand/logos/branco-logo-c8-club.svg",
+      "type": "logo",
+      "name": "logo c8 club"
+    },
+    {
+      "id": "branco-logo-c8-method.svg",
+      "url": "/assets/brand/logos/branco-logo-c8-method.svg",
+      "type": "logo",
+      "name": "logo c8 method"
+    },
+    {
+      "id": "branco-logo-c8-msgi.svg",
+      "url": "/assets/brand/logos/branco-logo-c8-msgi.svg",
+      "type": "logo",
+      "name": "logo c8 msgi"
+    },
+    {
+      "id": "branco-logo-c8-negocios.svg",
+      "url": "/assets/brand/logos/branco-logo-c8-negocios.svg",
+      "type": "logo",
+      "name": "logo c8 negocios"
+    },
+    {
+      "id": "branco-logo-c8-tech.svg",
+      "url": "/assets/brand/logos/branco-logo-c8-tech.svg",
+      "type": "logo",
+      "name": "logo c8 tech"
+    },
+    {
+      "id": "branco-logo-codigo-8-club.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-club.svg",
+      "type": "logo",
+      "name": "logo codigo 8 club"
+    },
+    {
+      "id": "branco-logo-codigo-8-method-vertical.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-method-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method vertical"
+    },
+    {
+      "id": "branco-logo-codigo-8-method.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-method.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method"
+    },
+    {
+      "id": "branco-logo-codigo-8-msgi.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-msgi.svg",
+      "type": "logo",
+      "name": "logo codigo 8 msgi"
+    },
+    {
+      "id": "branco-logo-codigo-8-negocios-vertical-1.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-negocios-vertical-1.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-1"
+    },
+    {
+      "id": "branco-logo-codigo-8-negocios-vertical-2.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-negocios-vertical-2.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-2"
+    },
+    {
+      "id": "branco-logo-codigo-8-negocios-vertical-3.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-negocios-vertical-3.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-3"
+    },
+    {
+      "id": "branco-logo-codigo-8-negocios-vertical.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-negocios-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical"
+    },
+    {
+      "id": "branco-logo-codigo-8-negocios.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-negocios.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios"
+    },
+    {
+      "id": "branco-logo-codigo-8-tech.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8-tech.svg",
+      "type": "logo",
+      "name": "logo codigo 8 tech"
+    },
+    {
+      "id": "branco-logo-codigo-8.svg",
+      "url": "/assets/brand/logos/branco-logo-codigo-8.svg",
+      "type": "logo",
+      "name": "logo codigo 8"
+    },
+    {
+      "id": "preto-logo-c8-club.svg",
+      "url": "/assets/brand/logos/preto-logo-c8-club.svg",
+      "type": "logo",
+      "name": "logo c8 club"
+    },
+    {
+      "id": "preto-logo-c8-method.svg",
+      "url": "/assets/brand/logos/preto-logo-c8-method.svg",
+      "type": "logo",
+      "name": "logo c8 method"
+    },
+    {
+      "id": "preto-logo-c8-msgi.svg",
+      "url": "/assets/brand/logos/preto-logo-c8-msgi.svg",
+      "type": "logo",
+      "name": "logo c8 msgi"
+    },
+    {
+      "id": "preto-logo-c8-negocios.svg",
+      "url": "/assets/brand/logos/preto-logo-c8-negocios.svg",
+      "type": "logo",
+      "name": "logo c8 negocios"
+    },
+    {
+      "id": "preto-logo-c8-tech.svg",
+      "url": "/assets/brand/logos/preto-logo-c8-tech.svg",
+      "type": "logo",
+      "name": "logo c8 tech"
+    },
+    {
+      "id": "preto-logo-codigo-8-club.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-club.svg",
+      "type": "logo",
+      "name": "logo codigo 8 club"
+    },
+    {
+      "id": "preto-logo-codigo-8-method-vertical.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-method-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method vertical"
+    },
+    {
+      "id": "preto-logo-codigo-8-method.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-method.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method"
+    },
+    {
+      "id": "preto-logo-codigo-8-msgi.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-msgi.svg",
+      "type": "logo",
+      "name": "logo codigo 8 msgi"
+    },
+    {
+      "id": "preto-logo-codigo-8-negocios-vertical-1.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-negocios-vertical-1.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-1"
+    },
+    {
+      "id": "preto-logo-codigo-8-negocios-vertical-2.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-negocios-vertical-2.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-2"
+    },
+    {
+      "id": "preto-logo-codigo-8-negocios-vertical-3.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-negocios-vertical-3.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-3"
+    },
+    {
+      "id": "preto-logo-codigo-8-negocios-vertical.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-negocios-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical"
+    },
+    {
+      "id": "preto-logo-codigo-8-negocios.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-negocios.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios"
+    },
+    {
+      "id": "preto-logo-codigo-8-tech.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8-tech.svg",
+      "type": "logo",
+      "name": "logo codigo 8 tech"
+    },
+    {
+      "id": "preto-logo-codigo-8.svg",
+      "url": "/assets/brand/logos/preto-logo-codigo-8.svg",
+      "type": "logo",
+      "name": "logo codigo 8"
+    },
+    {
+      "id": "azul-claro-logo-c8-club.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-c8-club.svg",
+      "type": "logo",
+      "name": "logo c8 club"
+    },
+    {
+      "id": "azul-claro-logo-c8-method.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-c8-method.svg",
+      "type": "logo",
+      "name": "logo c8 method"
+    },
+    {
+      "id": "azul-claro-logo-c8-msgi.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-c8-msgi.svg",
+      "type": "logo",
+      "name": "logo c8 msgi"
+    },
+    {
+      "id": "azul-claro-logo-c8-negocios.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-c8-negocios.svg",
+      "type": "logo",
+      "name": "logo c8 negocios"
+    },
+    {
+      "id": "azul-claro-logo-c8-tech.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-c8-tech.svg",
+      "type": "logo",
+      "name": "logo c8 tech"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-club.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-club.svg",
+      "type": "logo",
+      "name": "logo codigo 8 club"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-method-vertical.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-method-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method vertical"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-method.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-method.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-msgi.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-msgi.svg",
+      "type": "logo",
+      "name": "logo codigo 8 msgi"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-negocios-vertical-1.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-negocios-vertical-1.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-1"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-negocios-vertical-2.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-negocios-vertical-2.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-2"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-negocios-vertical-3.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-negocios-vertical-3.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-3"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-negocios-vertical.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-negocios-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-negocios.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-negocios.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8-tech.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8-tech.svg",
+      "type": "logo",
+      "name": "logo codigo 8 tech"
+    },
+    {
+      "id": "azul-claro-logo-codigo-8.svg",
+      "url": "/assets/brand/logos/azul-claro-logo-codigo-8.svg",
+      "type": "logo",
+      "name": "logo codigo 8"
+    },
+    {
+      "id": "azul-escuro-logo-c8-club.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-c8-club.svg",
+      "type": "logo",
+      "name": "logo c8 club"
+    },
+    {
+      "id": "azul-escuro-logo-c8-method.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-c8-method.svg",
+      "type": "logo",
+      "name": "logo c8 method"
+    },
+    {
+      "id": "azul-escuro-logo-c8-msgi.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-c8-msgi.svg",
+      "type": "logo",
+      "name": "logo c8 msgi"
+    },
+    {
+      "id": "azul-escuro-logo-c8-negocios.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-c8-negocios.svg",
+      "type": "logo",
+      "name": "logo c8 negocios"
+    },
+    {
+      "id": "azul-escuro-logo-c8-tech.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-c8-tech.svg",
+      "type": "logo",
+      "name": "logo c8 tech"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-club.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-club.svg",
+      "type": "logo",
+      "name": "logo codigo 8 club"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-method-vertical.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-method-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method vertical"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-method.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-method.svg",
+      "type": "logo",
+      "name": "logo codigo 8 method"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-msgi.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-msgi.svg",
+      "type": "logo",
+      "name": "logo codigo 8 msgi"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-negocios-vertical-1.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-negocios-vertical-1.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-1"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-negocios-vertical-2.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-negocios-vertical-2.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-2"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-negocios-vertical-3.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-negocios-vertical-3.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical-3"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-negocios-vertical.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-negocios-vertical.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios vertical"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-negocios.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-negocios.svg",
+      "type": "logo",
+      "name": "logo codigo 8 negocios"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8-tech.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8-tech.svg",
+      "type": "logo",
+      "name": "logo codigo 8 tech"
+    },
+    {
+      "id": "azul-escuro-logo-codigo-8.svg",
+      "url": "/assets/brand/logos/azul-escuro-logo-codigo-8.svg",
+      "type": "logo",
+      "name": "logo codigo 8"
+    }
+  ]
+}
