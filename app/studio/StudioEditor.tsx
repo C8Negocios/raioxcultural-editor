@@ -458,6 +458,9 @@ ${inner}  </div>
                      <div style={{
                          width: '1920px', height: '1080px',
                          background: currentSlide.backgroundColor,
+                         backgroundSize: currentSlide.backgroundColor.includes('url') ? 'cover' : undefined,
+                         backgroundPosition: currentSlide.backgroundColor.includes('url') ? 'center' : undefined,
+                         backgroundRepeat: currentSlide.backgroundColor.includes('url') ? 'no-repeat' : undefined,
                          transform: `scale(${scale})`,
                          transformOrigin: 'top left',
                          position: 'absolute', top: 0, left: 0,
