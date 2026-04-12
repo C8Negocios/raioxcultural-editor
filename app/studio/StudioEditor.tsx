@@ -405,7 +405,7 @@ ${inner}  </div>
       if (!slide) return;
 
       await apiPut(`/api/config/funnels/${funnelId}/templates/${slide.filename}`, {
-        filename: slide.filename, content: compileHtml(slide)
+        text: compileHtml(slide)
       });
 
       // Sincronizar com roteiro
@@ -426,8 +426,10 @@ ${inner}  </div>
       }
 
       if (!quiet) alert(`✅ Lâmina "${slide.filename}" salva${slide.isDynamic ? ' (Dinâmica)' : ` (Estática — ${slide.duration ?? '?'}s)`}`);
-    } catch (e) {
-      console.error(e); alert('Falha de gravação.');
+    } catch (e: any) {
+      console.error(e);
+      const msg = e?.message || e?.detail || JSON.stringify(e);
+      alert(`❌ Falha de gravação: ${msg}`);
     }
     setSaving(false);
   };
