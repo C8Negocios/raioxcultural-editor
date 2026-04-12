@@ -659,8 +659,10 @@ ${inner}  </div>
                   </div>
                   {section.limit < section.items.length && (
                     <button onClick={() => setVisibleAssets(v => ({ ...v, [section.key]: v[section.key] + section.step }))}
-                      style={{ width: '100%', padding: '5px', marginTop: '6px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)', borderRadius: '5px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
-                      Carregar Mais (+{section.step})
+                      style={{ width: '100%', padding: '7px', marginTop: '8px', background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: '5px', cursor: 'pointer', fontSize: '11px', fontWeight: 600, transition: 'all 0.2s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>
+                      ⬇ Carregar Texturas Ocultas ({(section.items.length - section.limit)} Restantes)
                     </button>
                   )}
                 </div>
