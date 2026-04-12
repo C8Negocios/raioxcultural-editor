@@ -148,6 +148,7 @@ export default function RoteiroPage({ params }: { params: Promise<{ id: string }
 
   // Autocomplete
   const [autocomplete, setAutocomplete] = useState({ visible: false, filter: "" });
+  const [popupPos, setPopupPos] = useState({ top: 0, left: 0, width: 0 });
   const scriptRef = useRef<HTMLTextAreaElement | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor));
@@ -222,8 +223,16 @@ export default function RoteiroPage({ params }: { params: Promise<{ id: string }
     setScriptBlocks(prev => ({ ...prev, [selectedNum]: val }));
     const pos = scriptRef.current?.selectionStart ?? val.length;
     const match = val.slice(0, pos).match(/\{\{(\w*)$/);
-    if (match) setAutocomplete({ visible: true, filter: match[1] });
-    else setAutocomplete({ visible: false, filter: "" });
+    if (match) {
+      // Calcular posição fixed baseada no bounding rect do textarea
+      const rect = scriptRef.current?.getBoundingClientRect();
+      if (rect) {
+        setPopupPos({ top: rect.top - 10, left: rect.left, width: rect.width });
+      }
+      setAutocomplete({ visible: true, filter: match[1] });
+    } else {
+      setAutocomplete({ visible: false, filter: "" });
+    }
   };
 
   const insertVar = (key: string) => {
@@ -463,31 +472,36 @@ export default function RoteiroPage({ params }: { params: Promise<{ id: string }
                   </div>
                 </div>
 
-                {/* Autocomplete popup */}
-                <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-                  {autocomplete.visible && (
-                    <div style={{
-                      position: "absolute", bottom: "calc(100% + 4px)", left: 0, right: 0, zIndex: 50,
-                      background: "#1E2130", border: "1px solid rgba(232,119,34,0.35)",
-                      borderRadius: 8, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-                    }}>
-                      <div style={{ padding: "5px 10px", fontSize: 10, color: "rgba(255,255,255,0.25)", borderBottom: "1px solid rgba(255,255,255,0.05)", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase" }}>
-                        Variáveis Jinja
-                      </div>
-                      {JINJA_VARS.filter(v => v.key.startsWith(autocomplete.filter)).map(v => (
-                        <div key={v.key} onClick={() => insertVar(v.key)}
-                          style={{ padding: "7px 10px", cursor: "pointer", display: "flex", gap: 10 }}
-                          onMouseEnter={e => e.currentTarget.style.background = "rgba(232,119,34,0.1)"}
-                          onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                          <code style={{ color: "#E87722", fontSize: 12, fontFamily: "monospace", fontWeight: 700 }}>
-                            {"{{ " + v.key + " }}"}
-                          </code>
-                          <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, alignSelf: "center" }}>{v.desc}</span>
-                        </div>
-                      ))}
+                {/* Autocomplete popup — fixed para não ser cortado por overflow:hidden */}
+                {autocomplete.visible && (
+                  <div style={{
+                    position: "fixed",
+                    top: Math.max(8, popupPos.top - (JINJA_VARS.filter(v => v.key.startsWith(autocomplete.filter)).length * 36 + 36)),
+                    left: popupPos.left,
+                    width: popupPos.width,
+                    zIndex: 9999,
+                    background: "#1E2130", border: "1px solid rgba(232,119,34,0.5)",
+                    borderRadius: 8, overflow: "hidden",
+                    boxShadow: "0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(232,119,34,0.15)",
+                  }}>
+                    <div style={{ padding: "5px 10px", fontSize: 10, color: "rgba(255,255,255,0.35)", borderBottom: "1px solid rgba(255,255,255,0.07)", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", background: "rgba(232,119,34,0.06)" }}>
+                      ⚡ Variáveis Jinja — clique para inserir
                     </div>
-                  )}
-                  <textarea
+                    {JINJA_VARS.filter(v => v.key.startsWith(autocomplete.filter)).map(v => (
+                      <div key={v.key}
+                        onMouseDown={e => { e.preventDefault(); insertVar(v.key); }}
+                        style={{ padding: "8px 12px", cursor: "pointer", display: "flex", gap: 10, alignItems: "center", transition: "background 0.1s" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "rgba(232,119,34,0.12)"}
+                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                        <code style={{ color: "#E87722", fontSize: 12, fontFamily: "monospace", fontWeight: 700, flexShrink: 0 }}>
+                          {"{{ " + v.key + " }}"}
+                        </code>
+                        <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{v.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <textarea
                     ref={scriptRef}
                     value={selectedScript}
                     onChange={e => handleScriptChange(e.target.value)}
@@ -501,7 +515,6 @@ export default function RoteiroPage({ params }: { params: Promise<{ id: string }
                       resize: "none", boxSizing: "border-box", outline: "none",
                     }}
                   />
-                </div>
 
                 {/* Player de áudio */}
                 {audioUrl && (
