@@ -355,7 +355,7 @@ ${inner}  </div>
             <button onClick={duplicateAsVariant} style={{ background: '#F3F4F6', color: '#374151', border: '1px solid #E5E7EB', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', transition: 'all 0.2s' }}>
                 Duplicar Variável
             </button>
-            <button onClick={handleSaveWorkspace} style={{ background: '#0EA5E9', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.2)' }}>
+            <button onClick={() => handleSaveWorkspace()} style={{ background: '#0EA5E9', color: '#fff', border: 'none', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(14, 165, 233, 0.2)' }}>
                 {saving ? (
                    <><span style={{ animation: 'pulse 1.5s infinite' }}>Salvando...</span></>
                 ) : (
@@ -550,8 +550,8 @@ ${inner}  </div>
                         <h4 style={{ color: '#9CA3AF', fontSize: '11px', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>Fundos & Texturas 3D</h4>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                             {c8Assets.backgrounds.map((bg) => (
-                               <div key={bg.id} onClick={() => currentSlide && updateSlide({...currentSlide, backgroundColor: \`url('\${bg.url}')\`})} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', height: '60px', transition: 'all 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.borderColor='#0EA5E9'} onMouseLeave={(e)=>e.currentTarget.style.borderColor='#E5E7EB'}>
-                                   <div style={{ width: '100%', height: '100%', backgroundImage: \`url('\${bg.url}')\`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                               <div key={bg.id} onClick={() => currentSlide && updateSlide({...currentSlide, backgroundColor: `url('${bg.url}')`})} style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', height: '60px', transition: 'all 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.borderColor='#0EA5E9'} onMouseLeave={(e)=>e.currentTarget.style.borderColor='#E5E7EB'}>
+                                   <div style={{ width: '100%', height: '100%', backgroundImage: `url('${bg.url}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                                </div>
                             ))}
                         </div>
