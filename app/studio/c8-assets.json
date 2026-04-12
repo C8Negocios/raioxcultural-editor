@@ -53,6 +53,246 @@
                             "url":  "/assets/brand/backgrounds/efeito-light-texture-gradient-categoria-02.webp",
                             "type":  "background",
                             "name":  "EFEITO=LIGHT, TEXTURE=GRADIENT, CATEGORIA=02"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-01.png",
+                            "name":  "C8 Fundo Inteligente 01",
+                            "id":  "c8-bg-01.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-02.png",
+                            "name":  "C8 Fundo Inteligente 02",
+                            "id":  "c8-bg-02.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-03.png",
+                            "name":  "C8 Fundo Inteligente 03",
+                            "id":  "c8-bg-03.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-04.png",
+                            "name":  "C8 Fundo Inteligente 04",
+                            "id":  "c8-bg-04.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-05.png",
+                            "name":  "C8 Fundo Inteligente 05",
+                            "id":  "c8-bg-05.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-06.png",
+                            "name":  "C8 Fundo Inteligente 06",
+                            "id":  "c8-bg-06.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-07.png",
+                            "name":  "C8 Fundo Inteligente 07",
+                            "id":  "c8-bg-07.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-08.png",
+                            "name":  "C8 Fundo Inteligente 08",
+                            "id":  "c8-bg-08.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-09.png",
+                            "name":  "C8 Fundo Inteligente 09",
+                            "id":  "c8-bg-09.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-10.png",
+                            "name":  "C8 Fundo Inteligente 10",
+                            "id":  "c8-bg-10.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-11.png",
+                            "name":  "C8 Fundo Inteligente 11",
+                            "id":  "c8-bg-11.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-12.png",
+                            "name":  "C8 Fundo Inteligente 12",
+                            "id":  "c8-bg-12.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-13.png",
+                            "name":  "C8 Fundo Inteligente 13",
+                            "id":  "c8-bg-13.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-14.png",
+                            "name":  "C8 Fundo Inteligente 14",
+                            "id":  "c8-bg-14.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-15.png",
+                            "name":  "C8 Fundo Inteligente 15",
+                            "id":  "c8-bg-15.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-16.png",
+                            "name":  "C8 Fundo Inteligente 16",
+                            "id":  "c8-bg-16.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-17.png",
+                            "name":  "C8 Fundo Inteligente 17",
+                            "id":  "c8-bg-17.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-18.png",
+                            "name":  "C8 Fundo Inteligente 18",
+                            "id":  "c8-bg-18.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-19.png",
+                            "name":  "C8 Fundo Inteligente 19",
+                            "id":  "c8-bg-19.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-20.png",
+                            "name":  "C8 Fundo Inteligente 20",
+                            "id":  "c8-bg-20.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-21.png",
+                            "name":  "C8 Fundo Inteligente 21",
+                            "id":  "c8-bg-21.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-22.png",
+                            "name":  "C8 Fundo Inteligente 22",
+                            "id":  "c8-bg-22.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-23.png",
+                            "name":  "C8 Fundo Inteligente 23",
+                            "id":  "c8-bg-23.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-24.png",
+                            "name":  "C8 Fundo Inteligente 24",
+                            "id":  "c8-bg-24.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-25.png",
+                            "name":  "C8 Fundo Inteligente 25",
+                            "id":  "c8-bg-25.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-26.png",
+                            "name":  "C8 Fundo Inteligente 26",
+                            "id":  "c8-bg-26.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-27.png",
+                            "name":  "C8 Fundo Inteligente 27",
+                            "id":  "c8-bg-27.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-28.png",
+                            "name":  "C8 Fundo Inteligente 28",
+                            "id":  "c8-bg-28.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-29.png",
+                            "name":  "C8 Fundo Inteligente 29",
+                            "id":  "c8-bg-29.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-30.png",
+                            "name":  "C8 Fundo Inteligente 30",
+                            "id":  "c8-bg-30.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-31.png",
+                            "name":  "C8 Fundo Inteligente 31",
+                            "id":  "c8-bg-31.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-32.png",
+                            "name":  "C8 Fundo Inteligente 32",
+                            "id":  "c8-bg-32.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-33.png",
+                            "name":  "C8 Fundo Inteligente 33",
+                            "id":  "c8-bg-33.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-34.png",
+                            "name":  "C8 Fundo Inteligente 34",
+                            "id":  "c8-bg-34.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-35.png",
+                            "name":  "C8 Fundo Inteligente 35",
+                            "id":  "c8-bg-35.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-36.png",
+                            "name":  "C8 Fundo Inteligente 36",
+                            "id":  "c8-bg-36.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-37.png",
+                            "name":  "C8 Fundo Inteligente 37",
+                            "id":  "c8-bg-37.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-38.png",
+                            "name":  "C8 Fundo Inteligente 38",
+                            "id":  "c8-bg-38.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-39.png",
+                            "name":  "C8 Fundo Inteligente 39",
+                            "id":  "c8-bg-39.png",
+                            "type":  "background"
+                        },
+                        {
+                            "url":  "/assets/brand/ia_backgrounds/c8-bg-40.png",
+                            "name":  "C8 Fundo Inteligente 40",
+                            "id":  "c8-bg-40.png",
+                            "type":  "background"
                         }
                     ],
     "graphics":  [
@@ -165,93 +405,687 @@
                          "name":  "Padrão=PATTERN 5"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-01.png",
-                         "name":  "C8 STENCIL = SLIDE 01",
-                         "id":  "c8-layer-slide-01.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-01.svg",
+                         "name":  "C8 Vetor/Alpha 01",
+                         "id":  "c8-graph-01.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-02.png",
-                         "name":  "C8 STENCIL = SLIDE 02",
-                         "id":  "c8-layer-slide-02.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-02.svg",
+                         "name":  "C8 Vetor/Alpha 02",
+                         "id":  "c8-graph-02.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-03.png",
-                         "name":  "C8 STENCIL = SLIDE 03",
-                         "id":  "c8-layer-slide-03.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-03.svg",
+                         "name":  "C8 Vetor/Alpha 03",
+                         "id":  "c8-graph-03.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-04.png",
-                         "name":  "C8 STENCIL = SLIDE 04",
-                         "id":  "c8-layer-slide-04.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-04.svg",
+                         "name":  "C8 Vetor/Alpha 04",
+                         "id":  "c8-graph-04.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-05.png",
-                         "name":  "C8 STENCIL = SLIDE 05",
-                         "id":  "c8-layer-slide-05.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-05.svg",
+                         "name":  "C8 Vetor/Alpha 05",
+                         "id":  "c8-graph-05.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-06.png",
-                         "name":  "C8 STENCIL = SLIDE 06",
-                         "id":  "c8-layer-slide-06.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-06.svg",
+                         "name":  "C8 Vetor/Alpha 06",
+                         "id":  "c8-graph-06.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-07.png",
-                         "name":  "C8 STENCIL = SLIDE 07",
-                         "id":  "c8-layer-slide-07.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-07.svg",
+                         "name":  "C8 Vetor/Alpha 07",
+                         "id":  "c8-graph-07.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-08.png",
-                         "name":  "C8 STENCIL = SLIDE 08",
-                         "id":  "c8-layer-slide-08.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-08.svg",
+                         "name":  "C8 Vetor/Alpha 08",
+                         "id":  "c8-graph-08.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-09.png",
-                         "name":  "C8 STENCIL = SLIDE 09",
-                         "id":  "c8-layer-slide-09.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-09.svg",
+                         "name":  "C8 Vetor/Alpha 09",
+                         "id":  "c8-graph-09.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-10.png",
-                         "name":  "C8 STENCIL = SLIDE 10",
-                         "id":  "c8-layer-slide-10.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-10.svg",
+                         "name":  "C8 Vetor/Alpha 10",
+                         "id":  "c8-graph-10.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-11.png",
-                         "name":  "C8 STENCIL = SLIDE 11",
-                         "id":  "c8-layer-slide-11.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-11.svg",
+                         "name":  "C8 Vetor/Alpha 11",
+                         "id":  "c8-graph-11.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-12.png",
-                         "name":  "C8 STENCIL = SLIDE 12",
-                         "id":  "c8-layer-slide-12.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-12.svg",
+                         "name":  "C8 Vetor/Alpha 12",
+                         "id":  "c8-graph-12.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-13.png",
-                         "name":  "C8 STENCIL = SLIDE 13",
-                         "id":  "c8-layer-slide-13.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-13.svg",
+                         "name":  "C8 Vetor/Alpha 13",
+                         "id":  "c8-graph-13.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-14.png",
-                         "name":  "C8 STENCIL = SLIDE 14",
-                         "id":  "c8-layer-slide-14.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-14.svg",
+                         "name":  "C8 Vetor/Alpha 14",
+                         "id":  "c8-graph-14.svg",
                          "type":  "graphic"
                      },
                      {
-                         "url":  "/assets/brand/ia_stencils/c8-layer-slide-15.png",
-                         "name":  "C8 STENCIL = SLIDE 15",
-                         "id":  "c8-layer-slide-15.png",
+                         "url":  "/assets/brand/ia_stencils/c8-graph-15.png",
+                         "name":  "C8 Vetor/Alpha 15",
+                         "id":  "c8-graph-15.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-16.png",
+                         "name":  "C8 Vetor/Alpha 16",
+                         "id":  "c8-graph-16.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-17.png",
+                         "name":  "C8 Vetor/Alpha 17",
+                         "id":  "c8-graph-17.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-18.png",
+                         "name":  "C8 Vetor/Alpha 18",
+                         "id":  "c8-graph-18.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-19.png",
+                         "name":  "C8 Vetor/Alpha 19",
+                         "id":  "c8-graph-19.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-20.png",
+                         "name":  "C8 Vetor/Alpha 20",
+                         "id":  "c8-graph-20.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-21.png",
+                         "name":  "C8 Vetor/Alpha 21",
+                         "id":  "c8-graph-21.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-22.png",
+                         "name":  "C8 Vetor/Alpha 22",
+                         "id":  "c8-graph-22.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-23.png",
+                         "name":  "C8 Vetor/Alpha 23",
+                         "id":  "c8-graph-23.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-24.png",
+                         "name":  "C8 Vetor/Alpha 24",
+                         "id":  "c8-graph-24.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-25.png",
+                         "name":  "C8 Vetor/Alpha 25",
+                         "id":  "c8-graph-25.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-26.png",
+                         "name":  "C8 Vetor/Alpha 26",
+                         "id":  "c8-graph-26.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-27.png",
+                         "name":  "C8 Vetor/Alpha 27",
+                         "id":  "c8-graph-27.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-28.png",
+                         "name":  "C8 Vetor/Alpha 28",
+                         "id":  "c8-graph-28.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-29.svg",
+                         "name":  "C8 Vetor/Alpha 29",
+                         "id":  "c8-graph-29.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-30.svg",
+                         "name":  "C8 Vetor/Alpha 30",
+                         "id":  "c8-graph-30.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-31.svg",
+                         "name":  "C8 Vetor/Alpha 31",
+                         "id":  "c8-graph-31.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-32.svg",
+                         "name":  "C8 Vetor/Alpha 32",
+                         "id":  "c8-graph-32.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-33.svg",
+                         "name":  "C8 Vetor/Alpha 33",
+                         "id":  "c8-graph-33.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-34.svg",
+                         "name":  "C8 Vetor/Alpha 34",
+                         "id":  "c8-graph-34.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-35.svg",
+                         "name":  "C8 Vetor/Alpha 35",
+                         "id":  "c8-graph-35.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-36.svg",
+                         "name":  "C8 Vetor/Alpha 36",
+                         "id":  "c8-graph-36.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-37.svg",
+                         "name":  "C8 Vetor/Alpha 37",
+                         "id":  "c8-graph-37.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-38.svg",
+                         "name":  "C8 Vetor/Alpha 38",
+                         "id":  "c8-graph-38.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-39.svg",
+                         "name":  "C8 Vetor/Alpha 39",
+                         "id":  "c8-graph-39.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-40.svg",
+                         "name":  "C8 Vetor/Alpha 40",
+                         "id":  "c8-graph-40.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-41.svg",
+                         "name":  "C8 Vetor/Alpha 41",
+                         "id":  "c8-graph-41.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-42.svg",
+                         "name":  "C8 Vetor/Alpha 42",
+                         "id":  "c8-graph-42.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-43.svg",
+                         "name":  "C8 Vetor/Alpha 43",
+                         "id":  "c8-graph-43.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-44.png",
+                         "name":  "C8 Vetor/Alpha 44",
+                         "id":  "c8-graph-44.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-45.png",
+                         "name":  "C8 Vetor/Alpha 45",
+                         "id":  "c8-graph-45.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-46.png",
+                         "name":  "C8 Vetor/Alpha 46",
+                         "id":  "c8-graph-46.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-47.png",
+                         "name":  "C8 Vetor/Alpha 47",
+                         "id":  "c8-graph-47.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-48.png",
+                         "name":  "C8 Vetor/Alpha 48",
+                         "id":  "c8-graph-48.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-49.png",
+                         "name":  "C8 Vetor/Alpha 49",
+                         "id":  "c8-graph-49.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-50.png",
+                         "name":  "C8 Vetor/Alpha 50",
+                         "id":  "c8-graph-50.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-51.png",
+                         "name":  "C8 Vetor/Alpha 51",
+                         "id":  "c8-graph-51.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-52.png",
+                         "name":  "C8 Vetor/Alpha 52",
+                         "id":  "c8-graph-52.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-53.png",
+                         "name":  "C8 Vetor/Alpha 53",
+                         "id":  "c8-graph-53.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-54.png",
+                         "name":  "C8 Vetor/Alpha 54",
+                         "id":  "c8-graph-54.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-55.png",
+                         "name":  "C8 Vetor/Alpha 55",
+                         "id":  "c8-graph-55.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-56.png",
+                         "name":  "C8 Vetor/Alpha 56",
+                         "id":  "c8-graph-56.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-57.png",
+                         "name":  "C8 Vetor/Alpha 57",
+                         "id":  "c8-graph-57.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-58.png",
+                         "name":  "C8 Vetor/Alpha 58",
+                         "id":  "c8-graph-58.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-59.svg",
+                         "name":  "C8 Vetor/Alpha 59",
+                         "id":  "c8-graph-59.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-60.svg",
+                         "name":  "C8 Vetor/Alpha 60",
+                         "id":  "c8-graph-60.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-61.svg",
+                         "name":  "C8 Vetor/Alpha 61",
+                         "id":  "c8-graph-61.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-62.svg",
+                         "name":  "C8 Vetor/Alpha 62",
+                         "id":  "c8-graph-62.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-63.svg",
+                         "name":  "C8 Vetor/Alpha 63",
+                         "id":  "c8-graph-63.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-64.svg",
+                         "name":  "C8 Vetor/Alpha 64",
+                         "id":  "c8-graph-64.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-65.svg",
+                         "name":  "C8 Vetor/Alpha 65",
+                         "id":  "c8-graph-65.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-66.svg",
+                         "name":  "C8 Vetor/Alpha 66",
+                         "id":  "c8-graph-66.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-67.svg",
+                         "name":  "C8 Vetor/Alpha 67",
+                         "id":  "c8-graph-67.svg",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-68.png",
+                         "name":  "C8 Vetor/Alpha 68",
+                         "id":  "c8-graph-68.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-69.png",
+                         "name":  "C8 Vetor/Alpha 69",
+                         "id":  "c8-graph-69.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-70.png",
+                         "name":  "C8 Vetor/Alpha 70",
+                         "id":  "c8-graph-70.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-71.png",
+                         "name":  "C8 Vetor/Alpha 71",
+                         "id":  "c8-graph-71.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-72.png",
+                         "name":  "C8 Vetor/Alpha 72",
+                         "id":  "c8-graph-72.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-73.png",
+                         "name":  "C8 Vetor/Alpha 73",
+                         "id":  "c8-graph-73.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-74.png",
+                         "name":  "C8 Vetor/Alpha 74",
+                         "id":  "c8-graph-74.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-75.png",
+                         "name":  "C8 Vetor/Alpha 75",
+                         "id":  "c8-graph-75.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-76.png",
+                         "name":  "C8 Vetor/Alpha 76",
+                         "id":  "c8-graph-76.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-77.png",
+                         "name":  "C8 Vetor/Alpha 77",
+                         "id":  "c8-graph-77.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-78.png",
+                         "name":  "C8 Vetor/Alpha 78",
+                         "id":  "c8-graph-78.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-79.png",
+                         "name":  "C8 Vetor/Alpha 79",
+                         "id":  "c8-graph-79.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-80.png",
+                         "name":  "C8 Vetor/Alpha 80",
+                         "id":  "c8-graph-80.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-81.png",
+                         "name":  "C8 Vetor/Alpha 81",
+                         "id":  "c8-graph-81.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-82.png",
+                         "name":  "C8 Vetor/Alpha 82",
+                         "id":  "c8-graph-82.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-83.png",
+                         "name":  "C8 Vetor/Alpha 83",
+                         "id":  "c8-graph-83.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-84.png",
+                         "name":  "C8 Vetor/Alpha 84",
+                         "id":  "c8-graph-84.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-85.png",
+                         "name":  "C8 Vetor/Alpha 85",
+                         "id":  "c8-graph-85.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-86.png",
+                         "name":  "C8 Vetor/Alpha 86",
+                         "id":  "c8-graph-86.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-87.png",
+                         "name":  "C8 Vetor/Alpha 87",
+                         "id":  "c8-graph-87.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-88.png",
+                         "name":  "C8 Vetor/Alpha 88",
+                         "id":  "c8-graph-88.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-89.png",
+                         "name":  "C8 Vetor/Alpha 89",
+                         "id":  "c8-graph-89.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-90.png",
+                         "name":  "C8 Vetor/Alpha 90",
+                         "id":  "c8-graph-90.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-91.png",
+                         "name":  "C8 Vetor/Alpha 91",
+                         "id":  "c8-graph-91.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-92.png",
+                         "name":  "C8 Vetor/Alpha 92",
+                         "id":  "c8-graph-92.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-93.png",
+                         "name":  "C8 Vetor/Alpha 93",
+                         "id":  "c8-graph-93.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-94.png",
+                         "name":  "C8 Vetor/Alpha 94",
+                         "id":  "c8-graph-94.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-95.png",
+                         "name":  "C8 Vetor/Alpha 95",
+                         "id":  "c8-graph-95.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-96.png",
+                         "name":  "C8 Vetor/Alpha 96",
+                         "id":  "c8-graph-96.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-97.png",
+                         "name":  "C8 Vetor/Alpha 97",
+                         "id":  "c8-graph-97.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-98.png",
+                         "name":  "C8 Vetor/Alpha 98",
+                         "id":  "c8-graph-98.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-99.png",
+                         "name":  "C8 Vetor/Alpha 99",
+                         "id":  "c8-graph-99.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-100.png",
+                         "name":  "C8 Vetor/Alpha 100",
+                         "id":  "c8-graph-100.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-101.png",
+                         "name":  "C8 Vetor/Alpha 101",
+                         "id":  "c8-graph-101.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-102.png",
+                         "name":  "C8 Vetor/Alpha 102",
+                         "id":  "c8-graph-102.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-103.png",
+                         "name":  "C8 Vetor/Alpha 103",
+                         "id":  "c8-graph-103.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-104.png",
+                         "name":  "C8 Vetor/Alpha 104",
+                         "id":  "c8-graph-104.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-105.png",
+                         "name":  "C8 Vetor/Alpha 105",
+                         "id":  "c8-graph-105.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-106.png",
+                         "name":  "C8 Vetor/Alpha 106",
+                         "id":  "c8-graph-106.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-107.png",
+                         "name":  "C8 Vetor/Alpha 107",
+                         "id":  "c8-graph-107.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-108.png",
+                         "name":  "C8 Vetor/Alpha 108",
+                         "id":  "c8-graph-108.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-109.png",
+                         "name":  "C8 Vetor/Alpha 109",
+                         "id":  "c8-graph-109.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-110.png",
+                         "name":  "C8 Vetor/Alpha 110",
+                         "id":  "c8-graph-110.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-111.png",
+                         "name":  "C8 Vetor/Alpha 111",
+                         "id":  "c8-graph-111.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-112.png",
+                         "name":  "C8 Vetor/Alpha 112",
+                         "id":  "c8-graph-112.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-113.png",
+                         "name":  "C8 Vetor/Alpha 113",
+                         "id":  "c8-graph-113.png",
+                         "type":  "graphic"
+                     },
+                     {
+                         "url":  "/assets/brand/ia_stencils/c8-graph-114.png",
+                         "name":  "C8 Vetor/Alpha 114",
+                         "id":  "c8-graph-114.png",
                          "type":  "graphic"
                      }
                  ],
